@@ -156,37 +156,42 @@ function drawClouds(){
     c.x+=c.speed; if(c.x>canvas.width+60) c.x=-60;  
   });  
 }  
-function drawBackground(){  
-  
-  // Tree trunk (static)  
-  ctx.drawImage(barkTexture, 90, 260);  
-  
-  // Gentle wind movement  
-  const sway = Math.sin(windTime) * 5; // 5 = strength of breeze  
-  
-  const leafGrad = ctx.createRadialGradient(112,220,30,112,240,100);  
-  leafGrad.addColorStop(0,"#81c784");  
-  leafGrad.addColorStop(1,"#1b5e20");  
-  
-  ctx.fillStyle = leafGrad;  
-  
-  // Leaf clusters (shifted smoothly)  
-  ctx.beginPath();  
-  ctx.arc(112 + sway, 230, 80, 0, Math.PI*2);  
-  ctx.fill();  
-  
-  ctx.beginPath();  
-  ctx.arc(150 + sway, 250, 70, 0, Math.PI*2);  
-  ctx.fill();  
-  
-  ctx.beginPath();  
-  ctx.arc(70 + sway, 250, 70, 0, Math.PI*2);  
-  ctx.fill();  
-  
-  ctx.beginPath();  
-  ctx.arc(112 + sway, 280, 75, 0, Math.PI*2);  
-  ctx.fill();  
-}  
+function drawBackground(){
+
+  // Tree trunk (static)
+  ctx.drawImage(barkTexture, 90, 260);
+
+  // Gentle wind sway
+  const sway = Math.sin(windTime) * 5;
+
+  // Move whole leaf canopy
+  ctx.save();
+  ctx.translate(sway, 0);
+
+  const leafGrad = ctx.createRadialGradient(112,220,30,112,240,100);
+  leafGrad.addColorStop(0,"#81c784");
+  leafGrad.addColorStop(1,"#1b5e20");
+
+  ctx.fillStyle = leafGrad;
+
+  ctx.beginPath();
+  ctx.arc(112,230,80,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(150,250,70,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(70,250,70,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(112,280,75,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.restore(); // restore normal drawing
+}
 function drawNewton(){  
   ctx.fillStyle="rgba(0,0,0,0.25)";  
   ctx.beginPath(); ctx.ellipse(newtonX+50,565,42,10,0,0,Math.PI*2); ctx.fill();  
