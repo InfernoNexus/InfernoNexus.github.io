@@ -1,204 +1,249 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Newton's Gravity Catch</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newton & Gravity</title>
 <style>
 body {
-    margin: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(#f7d7a1, #d7f0a3);
+  margin: 0;
+  text-align: center;
+  font-family: Arial;
+  background: linear-gradient(#9fdcff, #eef9ff);
+}
+canvas {
+  display: block;
+  margin: auto;
+  background: #87ceeb;
+  border: 4px solid #000;
+  border-radius: 32px;
 }
 
-#gameCanvas {
-    background: linear-gradient(#f7d7a1, #d7f0a3);
-    display: block;
-    margin: auto;
-    border: 8px solid #3a7d2f;
-    border-radius: 20px;
+/* Phone/game buttons */
+#controls {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 15px;
+}
+#controls button {
+  font-size: 36px;
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  border: 3px solid #444;
+  background: linear-gradient(#ff6666,#cc2222);
+  color: white;
+  box-shadow: 0 6px #aa0000;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+}
+#controls button:active {
+  box-shadow: 0 2px #aa0000;
+  transform: translateY(4px);
 }
 
-#ui {
-    position: absolute;
-    top: 10px;
-    left: 20px;
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
+/* Restart button */
+.restart-btn {
+  font-size: 22px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 3px solid #444;
+  background: linear-gradient(#ff6666,#cc2222);
+  color: white;
+  box-shadow: 0 5px #aa0000;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+}
+.restart-btn:active {
+  box-shadow: 0 2px #aa0000;
+  transform: translateY(3px);
 }
 
-#restartBtn {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    font-size: 18px;
-    background: #e74c3c;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    cursor: pointer;
+@media (max-width: 600px) {
+  canvas { width: 95%; height: auto; }
+  #controls button { width: 70px; height: 70px; font-size: 28px; }
+  .restart-btn { font-size: 18px; padding: 10px 18px; }
 }
 </style>
 </head>
-
 <body>
 
-<div id="ui">
-Score: <span id="score">0</span> |
-Lives: <span id="lives">3</span>
+<h2>🍎 Newton & Gravity 🍎</h2>
+<canvas id="game" width="520" height="620"></canvas>
+
+<div id="mobile-ui">
+  <div id="controls">
+    <button id="leftBtn">⬅️</button>
+    <button id="rightBtn">➡️</button>
+  </div>
+  <button class="restart-btn" onclick="restartGame()">Restart Game</button>
 </div>
 
-<button id="restartBtn">Restart Game</button>
-
-<canvas id="gameCanvas" width="480" height="640"></canvas>
+<audio id="bgm" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0f7c38a88e.mp3?filename=peaceful-garden-12257.mp3">
+</audio>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+const music = document.getElementById("bgm");
 
+// ---------------- VARIABLES ----------------
+let newtonX = 215;
+let appleX = Math.random() * 480;
+let appleY = 0;
 let score = 0;
-let lives = 3;
-let apples = [];
+let speed = 5;
+let lives = 1;
 let gameOver = false;
+let isGolden = false;
 
-const newton = {
-    x: 200,
-    y: 550,
-    width: 60,
-    height: 80,
-    speed: 6
-};
+let clouds = [
+  { x: 50, y: 80, speed: 0.3 },
+  { x: 250, y: 120, speed: 0.2 },
+  { x: 400, y: 60, speed: 0.25 }
+];
 
-// 🎩 Draw Newton (cartoon style like image)
-function drawNewton() {
-    ctx.fillStyle = "#8B4513"; // coat
-    ctx.fillRect(newton.x, newton.y, newton.width, newton.height);
-
-    ctx.fillStyle = "#F5DEB3"; // face
-    ctx.fillRect(newton.x + 15, newton.y - 30, 30, 30);
-
-    ctx.fillStyle = "white"; // wig
-    ctx.fillRect(newton.x + 10, newton.y - 40, 40, 10);
+// ---------------- TEXTURES ----------------
+// Bark Texture (static tree trunk)
+const barkTexture = document.createElement("canvas");
+barkTexture.width = 45;
+barkTexture.height = 220;
+const barkCtx = barkTexture.getContext("2d");
+barkCtx.fillStyle = "#6d4c41";
+barkCtx.fillRect(0,0,45,220);
+for(let i=0;i<70;i++){
+  barkCtx.strokeStyle = "rgba(0,0,0,0.2)";
+  barkCtx.beginPath();
+  let x = Math.random()*45;
+  barkCtx.moveTo(x,0);
+  barkCtx.lineTo(x + Math.random()*2-1, 220);
+  barkCtx.stroke();
 }
 
-// 🍎 Draw Apple
-function drawApple(apple) {
+// Grass texture
+const grassTexture = document.createElement("canvas");
+grassTexture.width = canvas.width;
+grassTexture.height = 180;
+const grassCtx = grassTexture.getContext("2d");
+const g = grassCtx.createLinearGradient(0,0,0,180);
+g.addColorStop(0,"#4caf50");
+g.addColorStop(1,"#2e7d32");
+grassCtx.fillStyle = g;
+grassCtx.fillRect(0,0,grassTexture.width,180);
+for(let i=0;i<450;i++){
+  let x = Math.random()*grassTexture.width;
+  let h = 10 + Math.random()*18;
+  grassCtx.strokeStyle="rgba(0,70,0,0.35)";
+  grassCtx.beginPath();
+  grassCtx.moveTo(x,180);
+  grassCtx.quadraticCurveTo(x + Math.random()*6-3, 180-h/2, x + Math.random()*4-2, 180-h);
+  grassCtx.stroke();
+}
+
+// ---------------- CONTROLS ----------------
+document.addEventListener("keydown", moveNewton);
+document.getElementById("leftBtn").ontouchstart = ()=>{ if(newtonX>20)newtonX-=30; };
+document.getElementById("rightBtn").ontouchstart = ()=>{ if(newtonX<410)newtonX+=30; };
+function moveNewton(e){
+  if(e.key==="ArrowLeft" && newtonX>20) newtonX-=25;
+  if(e.key==="ArrowRight" && newtonX<410) newtonX+=25;
+}
+
+// ---------------- DRAW FUNCTIONS ----------------
+function drawBackground(){
+  // Tree trunk (static)
+  ctx.drawImage(barkTexture, 90, 260);
+
+  // Tree leaves
+  for(let i=0;i<5;i++){
     ctx.beginPath();
-    ctx.arc(apple.x, apple.y, 15, 0, Math.PI * 2);
-
-    if (apple.type === "gold") {
-        ctx.fillStyle = "gold";
-    } else {
-        ctx.fillStyle = "red";
-    }
-
+    ctx.arc(112+Math.random()*30-15,230+Math.random()*25-12,75+Math.random()*10,0,Math.PI*2);
+    const leafGrad = ctx.createRadialGradient(112,220,30,112,240,100);
+    leafGrad.addColorStop(0,"#81c784");
+    leafGrad.addColorStop(1,"#1b5e20");
+    ctx.fillStyle = leafGrad;
     ctx.fill();
-    ctx.closePath();
+  }
 }
 
-// 🌳 Background Tree (simple cartoon style)
-function drawTree() {
-    ctx.fillStyle = "#8B4513";
-    ctx.fillRect(200, 150, 40, 150);
+function drawGrass(){ ctx.drawImage(grassTexture,0,440); }
 
+function drawClouds(){
+  ctx.fillStyle="rgba(255,255,255,0.9)";
+  clouds.forEach(c=>{
     ctx.beginPath();
-    ctx.arc(220, 120, 100, 0, Math.PI * 2);
-    ctx.fillStyle = "green";
+    ctx.arc(c.x,c.y,20,0,Math.PI*2);
+    ctx.arc(c.x+25,c.y+5,25,0,Math.PI*2);
+    ctx.arc(c.x+55,c.y,20,0,Math.PI*2);
     ctx.fill();
+    c.x+=c.speed; if(c.x>canvas.width+60) c.x=-60;
+  });
 }
 
-// 🍏 Spawn apples
-function spawnApple() {
-    let type = Math.random() < 0.2 ? "gold" : "normal";
-
-    apples.push({
-        x: Math.random() * (canvas.width - 30) + 15,
-        y: 0,
-        speed: 2 + Math.random() * 2,
-        type: type
-    });
+function drawNewton(){
+  ctx.fillStyle="rgba(0,0,0,0.25)";
+  ctx.beginPath(); ctx.ellipse(newtonX+50,565,42,10,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#6b3f2a"; ctx.fillRect(newtonX,455,100,95);
+  ctx.fillStyle="#ffffff"; ctx.fillRect(newtonX+40,455,20,70);
+  ctx.beginPath(); ctx.arc(newtonX+50,420,26,0,Math.PI*2); ctx.fillStyle="#f1c27d"; ctx.fill();
+  ctx.fillStyle="#f0f0f0"; ctx.beginPath(); ctx.arc(newtonX+50,410,32,Math.PI,0); ctx.fill();
+  ctx.beginPath(); ctx.arc(newtonX+18,425,14,0,Math.PI*2); ctx.arc(newtonX+82,425,14,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="black"; ctx.beginPath(); ctx.arc(newtonX+42,420,2.5,0,Math.PI*2); ctx.arc(newtonX+58,420,2.5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#000"; ctx.fillRect(newtonX+28,550,16,45); ctx.fillRect(newtonX+56,550,16,45);
 }
 
-// 🎮 Game loop
-function update() {
-    if (gameOver) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    drawTree();
-    drawNewton();
-
-    apples.forEach((apple, index) => {
-        apple.y += apple.speed;
-        drawApple(apple);
-
-        // collision detection
-        if (
-            apple.y > newton.y &&
-            apple.x > newton.x &&
-            apple.x < newton.x + newton.width
-        ) {
-            if (apple.type === "gold") {
-                score += 5;
-            } else {
-                score += 1;
-            }
-            apples.splice(index, 1);
-        }
-
-        // missed apple
-        if (apple.y > canvas.height) {
-            lives--;
-            apples.splice(index, 1);
-        }
-    });
-
-    document.getElementById("score").innerText = score;
-    document.getElementById("lives").innerText = lives;
-
-    if (lives <= 0) {
-        gameOver = true;
-        alert("Game Over! Final Score: " + score);
-    }
-
-    requestAnimationFrame(update);
+function drawApple(){
+  const appleGrad = ctx.createRadialGradient(appleX-4,appleY-6,2,appleX,appleY,16);
+  appleGrad.addColorStop(0,isGolden?"#fff7b3":"#ff6b6b");
+  appleGrad.addColorStop(1,isGolden?"#d4af37":"#b71c1c");
+  ctx.fillStyle=appleGrad;
+  ctx.beginPath(); ctx.arc(appleX,appleY,15,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(appleX-5,appleY-6,4,0,Math.PI*2); ctx.fillStyle=isGolden?"#fff4a3":"#ffaaaa"; ctx.fill();
+  ctx.fillStyle="brown"; ctx.fillRect(appleX-1,appleY-22,2,10);
 }
 
-// ⌨ Controls
-document.addEventListener("keydown", function(e) {
-    if (e.key === "ArrowLeft" && newton.x > 0) {
-        newton.x -= newton.speed;
-    }
-    if (e.key === "ArrowRight" && newton.x < canvas.width - newton.width) {
-        newton.x += newton.speed;
-    }
-});
+// ---------------- GAME LOGIC ----------------
+function resetApple(){
+  appleY=0;
+  const margin=30; appleX=margin+Math.random()*(canvas.width-margin*2);
+  isGolden=Math.random()<0.2;
+}
 
-// 📱 Touch Controls
-canvas.addEventListener("touchmove", function(e) {
-    let touchX = e.touches[0].clientX;
-    newton.x = touchX - canvas.offsetLeft - newton.width / 2;
-});
+function restartGame(){
+  score=0; speed=5; lives=1; gameOver=false;
+  resetApple();
+  music.volume=0.5; music.play();
+  gameLoop();
+}
 
-// 🔄 Restart
-document.getElementById("restartBtn").addEventListener("click", function() {
-    score = 0;
-    lives = 3;
-    apples = [];
-    gameOver = false;
-    update();
-});
+function gameLoop(){
+  if(gameOver){
+    ctx.fillStyle="rgba(0,0,0,0.65)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="red"; ctx.font="38px Arial"; ctx.fillText("GAME OVER",150,300);
+    ctx.fillStyle="white"; ctx.font="20px Arial"; ctx.fillText("Score: "+score,215,340);
+    return;
+  }
 
-// Spawn apples every second
-setInterval(spawnApple, 1000);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawClouds(); drawBackground(); drawGrass(); drawNewton(); drawApple();
+  ctx.fillStyle="black"; ctx.font="18px Arial";
+  ctx.fillText("Score: "+score,20,30); ctx.fillText("Life: "+lives,440,30);
 
-// Start game
-update();
+  appleY+=speed;
+  if(appleY>440 && appleX>newtonX && appleX<newtonX+100){
+    score+=isGolden?5:1;
+    if(score%4===0) speed+=1;
+    if(score%6===0) speed+=2;
+    resetApple();
+  }
+  if(appleY>canvas.height){ gameOver=true; music.pause(); }
+  requestAnimationFrame(gameLoop);
+}
+
+// ---------------- START ----------------
+resetApple();
+gameLoop();
 </script>
-
 </body>
 </html>
