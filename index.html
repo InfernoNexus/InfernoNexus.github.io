@@ -5,67 +5,62 @@
 <title>Newton & Gravity</title>
 
 <style>
-body {
-  margin: 0;
-  text-align: center;
-  font-family: Arial;
-  background: linear-gradient(#9fdcff, #eef9ff);
+body{
+  margin:0;
+  text-align:center;
+  font-family:Arial;
+  background:linear-gradient(#9fdcff,#eef9ff);
 }
 
-canvas {
-  display: block;
-  margin: auto;
-  background: #87ceeb;
-  border: 4px solid #000;
-  border-radius: 32px;
+canvas{
+  display:block;
+  margin:20px auto;
+  background:#87ceeb;
+  border:4px solid #000;
+  border-radius:30px;
+  width:95%;
+  max-width:520px;
+  height:auto;
 }
 
-/* Controls Layout */
-#controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  margin-top: 25px;
-  width: 100%;
+#controls{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  margin-top:20px;
 }
 
-/* Arrow buttons */
-.control-btn {
-  width: 90px;
-  height: 90px;
-  border-radius: 20px;
-  border: none;
-  font-size: 40px;
-  color: white;
-  background: linear-gradient(145deg, #ff4b4b, #b30000);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
-  cursor: pointer;
-  transition: all 0.2s ease;
+.control-btn{
+  width:80px;
+  height:80px;
+  border-radius:18px;
+  border:none;
+  font-size:36px;
+  color:white;
+  background:linear-gradient(145deg,#ff4b4b,#b30000);
+  box-shadow:0 8px 20px rgba(0,0,0,0.35);
+  cursor:pointer;
 }
 
-.control-btn:active {
-  transform: scale(0.92);
+.control-btn:active{
+  transform:scale(0.9);
 }
 
-/* Restart button */
-#restartBtn {
-  display: block;
-  margin: 25px auto 40px auto;
-  padding: 20px 50px;
-  font-size: 24px;
-  font-weight: bold;
-  border-radius: 40px;
-  border: none;
-  color: white;
-  background: linear-gradient(145deg, #ff2e2e, #990000);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-  cursor: pointer;
-  transition: all 0.2s ease;
+#restartBtn{
+  margin:30px auto 40px;
+  padding:18px 60px;
+  font-size:22px;
+  font-weight:bold;
+  border-radius:40px;
+  border:none;
+  color:white;
+  background:linear-gradient(145deg,#ff2e2e,#990000);
+  box-shadow:0 10px 25px rgba(0,0,0,0.4);
+  cursor:pointer;
 }
 
-#restartBtn:active {
-  transform: scale(0.95);
+#restartBtn:active{
+  transform:scale(0.95);
 }
 </style>
 </head>
@@ -74,7 +69,7 @@ canvas {
 
 <h2>🍎 Newton & Gravity 🍎</h2>
 
-<canvas id="game" width="520" height="620"></canvas>
+<canvas id="game"></canvas>
 
 <div id="controls">
   <button class="control-btn" onclick="moveLeft()">⬅</button>
@@ -92,146 +87,164 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const music = document.getElementById("bgm");
 
-let newtonX = 215;
-let appleX = Math.random() * 480;
+/* Responsive Canvas */
+function resizeCanvas(){
+  const width = Math.min(window.innerWidth*0.95,520);
+  canvas.width = width;
+  canvas.height = width*1.2;
+}
+resizeCanvas();
+window.addEventListener("resize",resizeCanvas);
+
+let newtonX = 200;
+let appleX = 100;
 let appleY = 0;
-
 let score = 0;
-let speed = 5;
+let speed = 4;
 let gameOver = false;
-let isGolden = false;
 
-let clouds = [
-  { x: 50, y: 80, speed: 0.3 },
-  { x: 250, y: 120, speed: 0.2 },
-  { x: 400, y: 60, speed: 0.25 }
-];
-
-/* Keyboard Controls */
-document.addEventListener("keydown", function(e) {
-  if (e.key === "ArrowLeft") moveLeft();
-  if (e.key === "ArrowRight") moveRight();
+/* Controls */
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft") moveLeft();
+  if(e.key==="ArrowRight") moveRight();
 });
 
-function moveLeft() {
-  if (newtonX > 20) newtonX -= 25;
+function moveLeft(){
+  if(newtonX>20) newtonX-=25;
+}
+function moveRight(){
+  if(newtonX<canvas.width-120) newtonX+=25;
 }
 
-function moveRight() {
-  if (newtonX < 410) newtonX += 25;
-}
+/* ---------- BACKGROUND ---------- */
+function drawBackground(){
 
-/* Background */
-function drawBackground() {
-  const trunkGrad = ctx.createLinearGradient(90, 260, 135, 260);
-  trunkGrad.addColorStop(0, "#4e342e");
-  trunkGrad.addColorStop(1, "#6d4c41");
+  // Sky
+  ctx.fillStyle="#87ceeb";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Tree trunk gradient
+  const trunkGrad = ctx.createLinearGradient(90,260,135,260);
+  trunkGrad.addColorStop(0,"#4e342e");
+  trunkGrad.addColorStop(1,"#6d4c41");
   ctx.fillStyle = trunkGrad;
-  ctx.fillRect(90, 260, 45, 220);
+  ctx.fillRect(90,260,45,220);
 
-  const leafGrad = ctx.createRadialGradient(112, 220, 20, 112, 240, 95);
-  leafGrad.addColorStop(0, "#66bb6a");
-  leafGrad.addColorStop(1, "#1b5e20");
-  ctx.beginPath();
-  ctx.arc(112, 240, 95, 0, Math.PI * 2);
-  ctx.fillStyle = leafGrad;
-  ctx.fill();
-}
-
-function drawGrass() {
-  const grad = ctx.createLinearGradient(0, 440, 0, canvas.height);
-  grad.addColorStop(0, "#4caf50");
-  grad.addColorStop(1, "#2e7d32");
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 440, canvas.width, canvas.height);
-}
-
-function drawClouds() {
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
-  clouds.forEach(c => {
+  // Bark texture
+  for(let i=0;i<20;i++){
+    ctx.strokeStyle="rgba(0,0,0,0.25)";
+    const y=260+Math.random()*220;
     ctx.beginPath();
-    ctx.arc(c.x, c.y, 20, 0, Math.PI * 2);
-    ctx.arc(c.x + 25, c.y + 5, 25, 0, Math.PI * 2);
-    ctx.arc(c.x + 55, c.y, 20, 0, Math.PI * 2);
-    ctx.fill();
-    c.x += c.speed;
-    if (c.x > canvas.width + 60) c.x = -60;
-  });
+    ctx.moveTo(90,y);
+    ctx.lineTo(135,y+Math.random()*6-3);
+    ctx.stroke();
+  }
+
+  // Leaves gradient
+  const leafGrad = ctx.createRadialGradient(112,220,20,112,240,95);
+  leafGrad.addColorStop(0,"#66bb6a");
+  leafGrad.addColorStop(1,"#1b5e20");
+  ctx.beginPath();
+  ctx.arc(112,240,95,0,Math.PI*2);
+  ctx.fillStyle=leafGrad;
+  ctx.fill();
+
+  // Grass
+  const grassGrad = ctx.createLinearGradient(0,canvas.height-150,0,canvas.height);
+  grassGrad.addColorStop(0,"#4caf50");
+  grassGrad.addColorStop(1,"#2e7d32");
+  ctx.fillStyle=grassGrad;
+  ctx.fillRect(0,canvas.height-150,canvas.width,150);
 }
 
-function drawNewton() {
-  ctx.fillStyle = "#6b3f2a";
-  ctx.fillRect(newtonX, 455, 100, 95);
+/* ---------- NEWTON ---------- */
+function drawNewton(){
+  const baseY = canvas.height - 150;
 
+  // Coat
+  ctx.fillStyle="#5d4037";
+  ctx.fillRect(newtonX, baseY-100, 90, 100);
+
+  // Head
   ctx.beginPath();
-  ctx.arc(newtonX + 50, 420, 26, 0, Math.PI * 2);
-  ctx.fillStyle = "#f1c27d";
+  ctx.arc(newtonX+45, baseY-120, 30, 0, Math.PI*2);
+  ctx.fillStyle="#f1c27d";
+  ctx.fill();
+
+  // Hair
+  ctx.beginPath();
+  ctx.arc(newtonX+45, baseY-140, 30, Math.PI, 0);
+  ctx.fillStyle="#4e342e";
+  ctx.fill();
+
+  // Eyes
+  ctx.fillStyle="black";
+  ctx.beginPath();
+  ctx.arc(newtonX+35, baseY-120, 4, 0, Math.PI*2);
+  ctx.arc(newtonX+55, baseY-120, 4, 0, Math.PI*2);
   ctx.fill();
 }
 
-function drawApple() {
+/* ---------- APPLE ---------- */
+function drawApple(){
   ctx.beginPath();
-  ctx.arc(appleX, appleY, 15, 0, Math.PI * 2);
-  ctx.fillStyle = isGolden ? "gold" : "red";
+  ctx.arc(appleX,appleY,15,0,Math.PI*2);
+  ctx.fillStyle="red";
   ctx.fill();
 }
 
-function resetApple() {
-  appleY = 0;
-  appleX = 30 + Math.random() * (canvas.width - 60);
-  isGolden = Math.random() < 0.2;
+/* ---------- GAME LOOP ---------- */
+function resetApple(){
+  appleY=0;
+  appleX=30+Math.random()*(canvas.width-60);
 }
 
-function restartGame() {
-  score = 0;
-  speed = 5;
-  gameOver = false;
+function restartGame(){
+  score=0;
+  speed=4;
+  gameOver=false;
   resetApple();
-  music.volume = 0.5;
   music.play();
-  gameLoop();
+  loop();
 }
 
-function gameLoop() {
-  if (gameOver) {
-    ctx.fillStyle = "rgba(0,0,0,0.6)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    ctx.fillText("Game Over", 170, 300);
+function loop(){
+  if(gameOver){
+    ctx.fillStyle="rgba(0,0,0,0.6)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="white";
+    ctx.font="30px Arial";
+    ctx.fillText("Game Over",canvas.width/2-80,canvas.height/2);
     return;
   }
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  drawClouds();
   drawBackground();
-  drawGrass();
   drawNewton();
   drawApple();
 
-  ctx.fillStyle = "black";
-  ctx.font = "18px Arial";
-  ctx.fillText("Score: " + score, 20, 30);
+  ctx.fillStyle="black";
+  ctx.font="18px Arial";
+  ctx.fillText("Score: "+score,20,30);
 
-  appleY += speed;
+  appleY+=speed;
 
-  if (appleY > 440 && appleX > newtonX && appleX < newtonX + 100) {
-    score += isGolden ? 5 : 1;
-    if (score % 4 === 0) speed++;
+  if(appleY>canvas.height-150 &&
+     appleX>newtonX &&
+     appleX<newtonX+90){
+    score++;
     resetApple();
   }
 
-  if (appleY > canvas.height) {
-    gameOver = true;
+  if(appleY>canvas.height){
+    gameOver=true;
     music.pause();
   }
 
-  requestAnimationFrame(gameLoop);
+  requestAnimationFrame(loop);
 }
 
 resetApple();
-gameLoop();
+loop();
 </script>
 
 </body>
