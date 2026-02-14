@@ -176,14 +176,13 @@ function moveNewton(e) {
     ctx.fillStyle = "rgba(255,255,255,0.06)";
     ctx.fillRect(x, y, 3, 3);
   }}
-    function drawGrass() {
-  // Base gradient (depth)
+function drawGrass() {
   const grad = ctx.createLinearGradient(0, 440, 0, canvas.height);
   grad.addColorStop(0, "#4caf50");
   grad.addColorStop(1, "#2e7d32");
 
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 440, canvas.width, canvas.height);}
+  ctx.fillRect(0, 440, canvas.width, canvas.height);
 
   // Grass blades texture
   for (let i = 0; i < 220; i++) {
@@ -195,8 +194,8 @@ function moveNewton(e) {
     ctx.moveTo(x, y);
     ctx.lineTo(x + Math.random() * 4 - 2, y - 10);
     ctx.stroke();
-  
-}
+  }
+
   // Light highlights
   for (let i = 0; i < 120; i++) {
     const x = Math.random() * canvas.width;
@@ -204,8 +203,8 @@ function moveNewton(e) {
 
     ctx.fillStyle = "rgba(255,255,255,0.08)";
     ctx.fillRect(x, y, 2, 2);
-  }}
-
+  }
+}  
 
 /* ---------- CLOUDS ---------- */
 function drawClouds() {
