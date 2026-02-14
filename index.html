@@ -84,6 +84,7 @@ canvas {
 </audio>
 
 <script>
+let windTime = 0;
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const music = document.getElementById("bgm");
@@ -151,21 +152,6 @@ function moveNewton(e){
 }
 
 // ---------------- DRAW FUNCTIONS ----------------
-function drawBackground(){
-  // Tree trunk (static)
-  ctx.drawImage(barkTexture, 90, 260);
-
-  // Tree leaves
-  for(let i=0;i<5;i++){
-    ctx.beginPath();
-    ctx.arc(112+Math.random()*30-15,230+Math.random()*25-12,75+Math.random()*10,0,Math.PI*2);
-    const leafGrad = ctx.createRadialGradient(112,220,30,112,240,100);
-    leafGrad.addColorStop(0,"#81c784");
-    leafGrad.addColorStop(1,"#1b5e20");
-    ctx.fillStyle = leafGrad;
-    ctx.fill();
-  }
-}
 
 function drawGrass(){ ctx.drawImage(grassTexture,0,440); }
 
@@ -180,7 +166,37 @@ function drawClouds(){
     c.x+=c.speed; if(c.x>canvas.width+60) c.x=-60;
   });
 }
+function drawBackground(){
 
+  // Tree trunk (static)
+  ctx.drawImage(barkTexture, 90, 260);
+
+  // Gentle wind movement
+  const sway = Math.sin(windTime) * 5; // 5 = strength of breeze
+
+  const leafGrad = ctx.createRadialGradient(112,220,30,112,240,100);
+  leafGrad.addColorStop(0,"#81c784");
+  leafGrad.addColorStop(1,"#1b5e20");
+
+  ctx.fillStyle = leafGrad;
+
+  // Leaf clusters (shifted smoothly)
+  ctx.beginPath();
+  ctx.arc(112 + sway, 230, 80, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(150 + sway, 250, 70, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(70 + sway, 250, 70, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(112 + sway, 280, 75, 0, Math.PI*2);
+  ctx.fill();
+}
 function drawNewton(){
   ctx.fillStyle="rgba(0,0,0,0.25)";
   ctx.beginPath(); ctx.ellipse(newtonX+50,565,42,10,0,0,Math.PI*2); ctx.fill();
@@ -238,7 +254,8 @@ function gameLoop(){
     resetApple();
   }
   if(appleY>canvas.height){ gameOver=true; music.pause(); }
-  requestAnimationFrame(gameLoop);
+ windTime += 0.03; // smaller = slower breeze 
+requestAnimationFrame(gameLoop);
 }
 
 // ---------------- START ----------------
