@@ -168,8 +168,6 @@ function moveNewton(e){
 
 // ---------------- DRAW FUNCTIONS ----------------
 
-function drawGrass(){ ctx.drawImage(grassTexture,0,440); }
-
 function drawClouds(){
   ctx.fillStyle="rgba(255,255,255,0.9)";
   clouds.forEach(c=>{
@@ -228,6 +226,8 @@ function drawNewton(){
   ctx.fillStyle="black"; ctx.beginPath(); ctx.arc(newtonX+42,420,2.5,0,Math.PI*2); ctx.arc(newtonX+58,420,2.5,0,Math.PI*2); ctx.fill();
   ctx.fillStyle="#000"; ctx.fillRect(newtonX+28,550,16,45); ctx.fillRect(newtonX+56,550,16,45);
 }
+function drawGrass(){ ctx.drawImage(grassTexture,0,440); }
+
 
 function drawApple(){
   const appleGrad = ctx.createRadialGradient(appleX-4,appleY-6,2,appleX,appleY,16);
