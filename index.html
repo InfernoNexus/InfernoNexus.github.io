@@ -28,7 +28,7 @@
       cursor: pointer;
       background: #ff3333;
       color: black;
-{
+}
 
 /* Arrow buttons row */
 #controls {
@@ -169,7 +169,7 @@ function moveNewton(e) {
   for (let i = 0; i < 160; i++) {
     const angle = Math.random() * Math.PI * 2;
     const radius = Math.random() * 85;
-}
+
     const x = 112 + Math.cos(angle) * radius;
     const y = 240 + Math.sin(angle) * radius;
 
@@ -183,7 +183,7 @@ function moveNewton(e) {
   grad.addColorStop(1, "#2e7d32");
 
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 440, canvas.width, canvas.height);
+  ctx.fillRect(0, 440, canvas.width, canvas.height);}
 
   // Grass blades texture
   for (let i = 0; i < 220; i++) {
