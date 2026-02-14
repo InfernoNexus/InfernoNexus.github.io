@@ -81,13 +81,12 @@
 <h2>🍎 Newton & Gravity 🍎</h2>
 
 <canvas id="game" width="520" height="620"></canvas>
-<div id="mobile-ui">
-  <div id="controls">
-    <button id="leftBtn">⬅️</button>
-    <button id="rightBtn">➡️</button>
-  </div>
+<div id="controls">
+  <button class="control-btn" onclick="moveLeft()">⬅</button>
+  <button class="control-btn" onclick="moveRight()">➡</button>
+</div>
 
-  <button class="restart-btn" onclick="restartGame()">Restart Game</button>
+<button id="restartBtn" onclick="restartGame()">Restart Game</button>
 </div>
 
 <!-- Background Music -->
