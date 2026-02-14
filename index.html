@@ -122,25 +122,40 @@ for(let i=0;i<70;i++){
   barkCtx.stroke();
 }
 
-// Grass texture
+// Enhanced Realistic Grass Texture
 const grassTexture = document.createElement("canvas");
 grassTexture.width = canvas.width;
 grassTexture.height = 180;
 const grassCtx = grassTexture.getContext("2d");
-const g = grassCtx.createLinearGradient(0,0,0,180);
-g.addColorStop(0,"#4caf50");
-g.addColorStop(1,"#2e7d32");
+
+// 1. The Ground Base (Gradient for depth)
+const g = grassCtx.createLinearGradient(0, 0, 0, 180);
+g.addColorStop(0, "#2e7d32"); // Darker top
+g.addColorStop(1, "#1b5e20"); // Very dark bottom
 grassCtx.fillStyle = g;
-grassCtx.fillRect(0,0,grassTexture.width,180);
-for(let i=0;i<450;i++){
-  let x = Math.random()*grassTexture.width;
-  let h = 10 + Math.random()*18;
-  grassCtx.strokeStyle="rgba(0,70,0,0.35)";
+grassCtx.fillRect(0, 0, grassTexture.width, 180);
+
+// 2. Draw 1000+ individual blades for density
+for (let i = 0; i < 1200; i++) {
+  let x = Math.random() * grassTexture.width;
+  let h = 15 + Math.random() * 25; // Random height
+  let lean = Math.random() * 10 - 5; // Random tilt
+  
+  // Pick a random green shade for variety
+  const colors = ["#388e3c", "#4caf50", "#81c784", "#2e7d32"];
+  grassCtx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
+  grassCtx.lineWidth = 1 + Math.random(); // Varied thickness
+
   grassCtx.beginPath();
-  grassCtx.moveTo(x,180);
-  grassCtx.quadraticCurveTo(x + Math.random()*6-3, 180-h/2, x + Math.random()*4-2, 180-h);
+  grassCtx.moveTo(x, 180); // Start at bottom
+  // Create a slight curve for each blade
+  grassCtx.quadraticCurveTo(
+    x + lean, 180 - h / 2, 
+    x + (lean * 1.5), 180 - h
+  );
   grassCtx.stroke();
 }
+
 
 // ---------------- CONTROLS ----------------
 document.addEventListener("keydown", moveNewton);
