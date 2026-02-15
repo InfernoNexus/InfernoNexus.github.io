@@ -54,29 +54,27 @@ canvas { width: 95%; height: auto; }
 }
 body{
   margin:0;
+  background:#111;
   display:flex;
   justify-content:center;
-  align-items:center;
-  height:100vh;
-  background:#1a1a1a;
 }
 
 .frame{
   position:relative;
-  width:850px;
-  height:850px;
-  padding:40px;
-  border-radius:35px;
+  width:95vw;
+  max-width:900px;
+  aspect-ratio:1 / 1;   /* keeps square shape */
+  padding:4vw;
+  border-radius:30px;
 
-  background:
-    linear-gradient(145deg,#3a2b12,#1b1205);
+  background:linear-gradient(145deg,#3a2b12,#1b1205);
 
-  border:10px solid gold;
+  border:8px solid gold;
 
   box-shadow:
-    0 0 30px gold,
-    0 0 60px rgba(255,215,0,0.6),
-    inset 0 0 25px rgba(255,215,0,0.6);
+    0 0 20px gold,
+    0 0 40px rgba(255,215,0,0.5),
+    inset 0 0 20px rgba(255,215,0,0.6);
 
   animation: glow 2.5s infinite alternate;
 }
@@ -84,15 +82,15 @@ body{
 @keyframes glow{
   from{
     box-shadow:
-      0 0 20px gold,
-      0 0 40px rgba(255,215,0,0.5),
-      inset 0 0 20px rgba(255,215,0,0.5);
+      0 0 15px gold,
+      0 0 30px rgba(255,215,0,0.5),
+      inset 0 0 15px rgba(255,215,0,0.5);
   }
   to{
     box-shadow:
-      0 0 40px #ffd700,
-      0 0 80px rgba(255,215,0,0.9),
-      inset 0 0 35px rgba(255,215,0,0.9);
+      0 0 30px #ffd700,
+      0 0 60px rgba(255,215,0,0.9),
+      inset 0 0 25px rgba(255,215,0,0.9);
   }
 }
 
