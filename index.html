@@ -60,43 +60,23 @@ body{
 }
 
 .frame{
-  position:relative;
   width:95vw;
-  max-width:900px;
-  aspect-ratio:1 / 1;   /* keeps square shape */
-  padding:4vw;
-  border-radius:30px;
-
+  max-width:500px;
+  border-radius:25px;
+  padding:20px;
   background:linear-gradient(145deg,#3a2b12,#1b1205);
-
-  border:8px solid gold;
-
+  border:6px solid gold;
   box-shadow:
     0 0 20px gold,
-    0 0 40px rgba(255,215,0,0.5),
+    0 0 40px rgba(255,215,0,0.6),
     inset 0 0 20px rgba(255,215,0,0.6);
 
-  animation: glow 2.5s infinite alternate;
-}
-
-@keyframes glow{
-  from{
-    box-shadow:
-      0 0 15px gold,
-      0 0 30px rgba(255,215,0,0.5),
-      inset 0 0 15px rgba(255,215,0,0.5);
-  }
-  to{
-    box-shadow:
-      0 0 30px #ffd700,
-      0 0 60px rgba(255,215,0,0.9),
-      inset 0 0 25px rgba(255,215,0,0.9);
-  }
-}
-
-canvas{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+}canvas{
   width:100%;
-  height:70%;
   border-radius:20px;
   display:block;
 }
