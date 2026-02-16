@@ -198,7 +198,7 @@ function drawApple(){
 }
 
 function spawnBomb() {
-    if (Math.random() < 0.02) { // Reduced spawn rate for fairness
+    if (Math.random() < 0.01) { // Reduced spawn rate for fairness
         bombs.push({
             x: Math.random() * (canvas.width - 40),
             y: -50,
