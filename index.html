@@ -89,6 +89,8 @@
 
     <script>
         // --- ASSET LOADING ---
+        let backgroundImg = new Image();
+        backgroundImg.src = 'background.png';
         let bombs = [];
         let bombImg = new Image();
         bombImg.src = 'bomb.png';
@@ -221,18 +223,10 @@ document.addEventListener("keyup", (e) => {
         }
 
         function drawBackground(){
-            ctx.drawImage(barkTexture, 90, 260);
-            const sway = Math.sin(windTime) * 5;
-            ctx.save(); ctx.translate(sway, 0);
-            const leafGrad = ctx.createRadialGradient(112,220,30,112,240,100);
-            leafGrad.addColorStop(0,"#81c784");
-            leafGrad.addColorStop(1,"#1b5e20");
-            ctx.fillStyle = leafGrad;
-            ctx.beginPath(); ctx.arc(112,230,80,0,Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(150,250,70,0,Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(70,250,70,0,Math.PI*2); ctx.fill();
-            ctx.restore(); 
-        }
+    // This draws your image to perfectly fill the game frame (520x620)
+    ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+}
+
 
         // --- GAME OBJECT LOGIC ---
 
