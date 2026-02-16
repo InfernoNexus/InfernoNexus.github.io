@@ -258,7 +258,7 @@ function gameLoop(){
         score+=isGolden?5:1;
         if(score%10===0) speed+=2;
 if(score%20==0) speed+=4;
-if(score%30==0) speed+=6;
+if(score%30==0) speed+=5;
         resetApple();
     }
     if(appleY>canvas.height){ gameOver=true; music.pause(); }
