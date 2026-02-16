@@ -2,74 +2,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">    
 <title>Newton & Gravity</title>    
 <style>  
-/* Container to center everything */
-#mobile-ui {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    background: transparent; /* This ensures the checkerboard isn't visible */
-}
-
-#controls {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-}
-
-/* Base style for the round arrow buttons */
 #leftBtn, #rightBtn {
-    width: 110px;  /* Increased size to fit the glowing aura */
-    height: 110px;
+    width: 90px;
+    height: 90px;
     border: none;
     outline: none;
     background-color: transparent;
     background-image: url('buttons.png'); 
     background-repeat: no-repeat;
     
-    /* This scales the 1024px image down so the buttons fit perfectly */
-    background-size: 380px; 
+    /* We zoom in more to hide the checkerboard edges */
+    background-size: 330px; 
     
     cursor: pointer;
     transition: transform 0.1s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* POSITION FOR LEFT ARROW (Crops the top-left button) */
+/* LEFT ARROW: Recalibrated for center */
 #leftBtn {
-    background-position: -5px -15px; 
+    background-position: -12px -15px; 
 }
 
-/* POSITION FOR RIGHT ARROW (Crops the top-right button) */
+/* RIGHT ARROW: Recalibrated for center */
 #rightBtn {
-    background-position: -265px -15px; 
+    background-position: -230px -15px; 
 }
 
-/* THE CLICK ANIMATION (Pushes in and comes up) */
-#leftBtn:active, #rightBtn:active {
-    transform: translateY(8px) scale(0.92);
-    filter: brightness(0.9);
-}
-
-/* RESTART BUTTON FIXED */
+/* RESTART BUTTON: Moved lower to avoid seeing the arrows above it */
 .restart-btn {
     display: block;
-    width: 240px;
-    height: 75px;
+    margin: 20px auto;
+    width: 210px;
+    height: 65px;
     border: none;
     background-color: transparent;
     background-image: url('buttons.png');
     background-repeat: no-repeat;
-    background-size: 380px;
-    /* Slides down to the Restart Button part of the image */
-    background-position: -70px -265px; 
+    background-size: 330px;
+    background-position: -60px -235px; 
     cursor: pointer;
-    transition: transform 0.1s;
 }
 
-.restart-btn:active {
-    transform: scale(0.96) translateY(4px);
+/* DYNAMIC CLICK EFFECT */
+#leftBtn:active, #rightBtn:active, .restart-btn:active {
+    transform: translateY(6px) scale(0.95);
+    filter: brightness(0.8);
 }
 
 </style>
