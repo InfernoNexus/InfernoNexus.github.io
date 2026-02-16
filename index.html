@@ -224,7 +224,7 @@ function drawApple(){
 }
 function spawnBomb() {
     // Only spawn a bomb 2% of the time each frame
-    if (Math.random() < 0.02) {
+    if (Math.random() < 0.06) {
         bombs.push({
             x: Math.random() * (canvas.width - 40),
             y: -50,
@@ -294,9 +294,9 @@ function gameLoop(){
     appleY+=speed;
     if(appleY>440 && appleX>newtonX && appleX<newtonX+100){
         score+=isGolden?5:1;
-        if(score%10===0) speed+=2;
-if(score%20==0) speed+=4;
-if(score%30==0) speed+=5;
+        if(score%10===0) speed+=1;
+if(score%20==0) speed+=2;
+if(score%30==0) speed+=3;
         resetApple();
     }
     if(appleY>canvas.height){ gameOver=true; music.pause(); }
