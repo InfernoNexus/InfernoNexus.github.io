@@ -2,77 +2,76 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">    
 <title>Newton & Gravity</title>    
 <style>    
-body { margin: 0; text-align: center; font-family: Arial; background: #b0e2ff; }
-canvas { display: block; margin: auto; background: #87ceeb; border: 4px solid #000; border-radius: 32px; width: 95%; max-width: 520px; }
-
-/* Keeping your current stacked positioning */
+/* Container for the buttons */
 #controls {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    margin-top: 15px;
+    gap: 30px;
+    margin-top: 20px;
 }
 
-/* Circular 3D Buttons */
+/* The Spherical 3D Orb Button */
 #leftBtn, #rightBtn {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    border: 3px solid #ffe066; /* Golden edge */
-    background: radial-gradient(circle at 30% 30%, #ff6b6b, #800000 80%); /* 3D Sphere shading */
-    color: white;
-    font-size: 30px;
-    font-weight: bold;
+    border: 3px solid #ffcc00;
     cursor: pointer;
     position: relative;
-    /* This creates the heavy 3D base and the initial glow */
-    box-shadow: 
-        0 6px 0 #550000, 
-        0 0 20px rgba(255, 215, 0, 0.9); 
-    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     outline: none;
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.1s;
+
+    /* THE 3D ORB EFFECT */
+    /* 1. The base colors and the top-left highlight highlight */
+    background: radial-gradient(circle at 30% 30%, #ff8888, #b30000 60%, #660000 100%);
+    
+    /* 2. Layered shadows for depth and the glow aura */
+    box-shadow: 
+        inset -4px -4px 10px rgba(0,0,0,0.5),   /* Bottom-right inner shadow */
+        inset 4px 4px 10px rgba(255,255,255,0.4), /* Top-left inner highlight */
+        0 8px 0 #550000,                          /* 3D Base depth */
+        0 0 25px rgba(255, 204, 0, 0.7);          /* The Hazy Golden Glow */
 }
 
-/* The Intense Golden Aura (The Ring) */
-#leftBtn::before, #rightBtn::before {
+/* Adding the extra 'Glow Ring' aura from the target photo */
+#leftBtn::after, #rightBtn::after {
     content: '';
     position: absolute;
-    top: -8px; left: -8px; right: -8px; bottom: -8px; /* Larger than button */
+    top: -10px; left: -10px; right: -10px; bottom: -10px;
     border-radius: 50%;
-    border: 4px solid #ffd700;
-    /* Layered glow: inner glow, outer glow, and a blur */
-    box-shadow: 
-        0 0 15px #ffcc00, 
-        inset 0 0 10px #ffcc00;
-    animation: aura-glow 1.5s infinite ease-in-out;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    /* This creates the hazy 'fire' effect around the edge */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
     pointer-events: none;
 }
 
-@keyframes aura-glow {
-    0% { transform: scale(1); opacity: 0.6; filter: blur(1px); }
-    50% { transform: scale(1.1); opacity: 1; filter: blur(2px); }
-    100% { transform: scale(1); opacity: 0.6; filter: blur(1px); }
-}
-
-/* Restart Button */
+/* Restart Button - Matching the target's textured 3D look */
 .restart-btn {
-    margin-top: 15px;
-    font-size: 20px;
+    display: block;
+    margin: 15px auto;
+    font-size: 18px;
     font-weight: bold;
-    padding: 12px 30px;
+    padding: 10px 25px;
     border-radius: 12px;
-    border: 3px solid #ffe066;
-    background: linear-gradient(#ff4d4d, #990000);
+    border: 3px solid #ffcc00;
     color: white;
-    box-shadow: 0 5px #550000, 0 0 20px rgba(255, 215, 0, 0.6);
     cursor: pointer;
+    background: linear-gradient(#ee4444, #990000);
+    box-shadow: 
+        0 6px 0 #660000, 
+        0 0 20px rgba(255, 204, 0, 0.4);
 }
 
+/* Button Press Animation */
 #leftBtn:active, #rightBtn:active, .restart-btn:active {
     transform: translateY(4px);
-    box-shadow: 0 2px #330000;
+    box-shadow: 0 2px 0 #330000, 0 0 15px rgba(255, 204, 0, 0.6);
 }
 
 </style>
