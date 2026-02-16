@@ -183,13 +183,13 @@ function drawApple(){
 }
 
 function drawNewton(){
-    // Shadow from original code
+    // Shadow (kept original style)
     ctx.fillStyle="rgba(0,0,0,0.25)";
-    ctx.beginPath(); ctx.ellipse(newtonX+50,565,42,10,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(newtonX+85,565,55,10,0,0,Math.PI*2); ctx.fill();
     
-    // NEWTON IMAGE REPLACEMENT
-    // Drawing him at the bigger size you asked for
-    ctx.drawImage(newtonImg, newtonX, 370, 150, 195); 
+    // NEWTON IMAGE (Wider version)
+    // Changed width from 150 to 170
+    ctx.drawImage(newtonImg, newtonX, 370, 170, 195); 
 }
 
 function spawnBomb() {
@@ -215,7 +215,7 @@ function updateBombs() {
         ctx.restore();
 
         // Collision detection for bigger Newton
-        if (b.x < newtonX + 130 && b.x + b.size > newtonX + 20 &&
+        if (b.x < newtonX + 150 && b.x + b.size > newtonX + 20 &&
             b.y > 370 && b.y < 560) {
             gameOver = true;
             music.pause();
@@ -287,7 +287,7 @@ function gameLoop(){
 
     appleY += speed;
     // Catch Check for bigger Newton
-    if(appleY > 400 && appleY < 500 && appleX > newtonX && appleX < newtonX + 150){
+    if(appleY > 400 && appleY < 500 && appleX > newtonX && appleX < newtonX + 170){
         score += isGolden ? 5 : 1;
         if(score % 10 === 0) speed += 0.5;
         resetApple();
