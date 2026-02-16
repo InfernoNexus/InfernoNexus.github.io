@@ -241,14 +241,15 @@ function updateBombs() {
         // DRAW BOMB
         ctx.drawImage(bombImg, b.x, b.y, b.size, b.size);
 
-        // COLLISION DETECTION
+        // COLLISION DETECTION (Using Newton's coordinates)
         if (
-            b.x < player.x + player.width &&
-            b.x + b.size > player.x &&
-            b.y < player.y + player.height &&
-            b.y + b.size > player.y
+            b.x < newtonX + 100 &&  // Newton's width is 100
+            b.x + b.size > newtonX &&
+            b.y < 455 + 95 &&       // Newton's Y is 455, height is 95
+            b.y + b.size > 455
         ) {
-            gameOver(); // Call your game over function here
+            gameOver = true; // Sets the game over flag
+            music.pause();
         }
 
         // Remove if off screen
@@ -257,6 +258,7 @@ function updateBombs() {
         }
     }
 }
+
 
 // ---------------- GAME LOGIC ----------------
 function resetApple(){
@@ -268,6 +270,7 @@ function resetApple(){
 
 function restartGame(){
     score=0; speed=5; lives=1; gameOver=false;
+bombs[];
     resetApple();
     music.volume=0.5; music.play();
     gameLoop();
@@ -280,7 +283,8 @@ function gameLoop(){
         ctx.fillStyle="white"; ctx.font="20px Arial"; ctx.fillText("Score: "+score,215,340);
         return;
     }
-
+spawnBomb();
+updateBombs();
     // CONTINUOUS MOVEMENT LOGIC
     if (keys.left && newtonX > 0) newtonX -= 7;
     if (keys.right && newtonX < canvas.width - 100) newtonX += 7;
