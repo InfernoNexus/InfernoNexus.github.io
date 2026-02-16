@@ -9,24 +9,14 @@
         body { margin: 0; text-align: center; font-family: Arial; background: #b0e2ff; }
         
         canvas { 
-            display: block; margin: auto; background: #87ceeb; 
-            border: 4px solid #000; border-radius: 32px; 
-            width: 95%; max-width: 520px; 
+            display: block; margin: auto; border: 4px solid #000; 
+            border-radius: 32px; width: 95%; max-width: 520px; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
         }
 
-        /* Movement Controls */
-#controls {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 15px;
-}
-
-/* Hide buttons when using laptop */
-@media (hover: hover) and (pointer: fine) {
-    #controls { display: none; }
-}
-
+        /* Movement Controls - Hidden on Laptops */
+        #controls { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
+        @media (hover: hover) and (pointer: fine) { #controls { display: none; } }
 
         /* 3D Action Buttons */
         #leftBtn, #rightBtn {
@@ -40,7 +30,6 @@
             outline: none; -webkit-tap-highlight-color: transparent;
         }
 
-        /* Button Aura Animation */
         #leftBtn::before, #rightBtn::before {
             content: ''; position: absolute;
             top: -8px; left: -8px; right: -8px; bottom: -8px;
@@ -55,7 +44,6 @@
             50% { transform: scale(1.1); opacity: 1; filter: blur(2px); }
         }
 
-        /* Restart Button Styling */
         .restart-btn {
             margin-top: 15px; font-size: 20px; font-weight: bold;
             padding: 12px 30px; border-radius: 12px; border: 3px solid #ffe066;
@@ -83,144 +71,89 @@
         <button class="restart-btn" onclick="restartGame()">Restart Game</button>
     </div>
 
-    <audio id="bgm" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0f7c38a88e.mp3?filename=peaceful-garden-12257.mp3">
-    </audio>
-
     <script>
         // --- ASSET LOADING ---
-        let particles = [];
-class Particle {
-    constructor(x, y, color) {
-        this.x = x; this.y = y;
-        this.size = Math.random() * 5 + 2;
-        this.speedX = Math.random() * 6 - 3;
-        this.speedY = Math.random() * 6 - 3;
-        this.color = color;
-        this.alpha = 1;
-    }
-    update() { this.x += this.speedX; this.y += this.speedY; this.alpha -= 0.02; }
-    draw() {
-        ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
-        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-    }
-}
-function createExplosion(x, y) {
-    for (let i = 0; i < 20; i++) {
-        particles.push(new Particle(x, y, "orange"));
-    }
-}
-        // --- AUDIO SYSTEM ---
-const catchSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3"); // Happy pop
-const explodeSound = new Audio("https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3"); // Explosion/Thud
-const gameOverSound = new Audio("https://assets.mixkit.co/active_storage/sfx/131/131-preview.mp3"); // Fail sound
-
-// Set volumes so they don't overpower the music
-catchSound.volume = 0.6;
-explodeSound.volume = 0.8;
-
-        let backgroundImg = new Image();
-        backgroundImg.src = 'background.png';
-        let bombs = [];
-        let bombImg = new Image();
-        bombImg.src = 'bomb.png';
-        
-        let newtonImg = new Image();
-        newtonImg.src = 'newton.png';
-
-        const music = document.getElementById("bgm");
-        const clickSound = new Audio("https://www.soundjay.com/buttons/sounds/button-16.mp3");
-
-        function playClick() {
-            clickSound.currentTime = 0;
-            clickSound.play();
-        }
-
-        // --- GAME INITIALIZATION ---
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
 
-        let windTime = 0;
+        let backgroundImg = new Image();
+        backgroundImg.src = 'background.png';
+        
+        let newtonImg = new Image();
+        newtonImg.src = 'newton.png';
+        
+        let bombImg = new Image();
+        bombImg.src = 'bomb.png';
+
+        // --- GAME VARIABLES ---
         let newtonX = 215;
         let appleX = Math.random() * 480;
         let appleY = 0;
         let score = 0;
         let speed = 5;
-        let lives = 1;
         let gameOver = false;
         let isGolden = false;
-
+        let bgOffset = 0;
+        let particles = [];
+        let bombs = [];
         const keys = { left: false, right: false };
 
-        let clouds = [
-            { x: 50, y: 80, speed: 0.3 },
-            { x: 250, y: 120, speed: 0.2 },
-            { x: 400, y: 60, speed: 0.25 }
-        ];
-
-        // --- PROCEDURAL TEXTURES ---
-        
-        // Tree Bark Texture
-        const barkTexture = document.createElement("canvas");
-        barkTexture.width = 45; barkTexture.height = 220;
-        const barkCtx = barkTexture.getContext("2d");
-        barkCtx.fillStyle = "#6d4c41";
-        barkCtx.fillRect(0,0,45,220);
-        for(let i=0; i<70; i++){
-            barkCtx.strokeStyle = "rgba(0,0,0,0.2)";
-            barkCtx.beginPath();
-            let x = Math.random()*45;
-            barkCtx.moveTo(x,0); barkCtx.lineTo(x + Math.random()*2-1, 220);
-            barkCtx.stroke();
+        // --- PARTICLE SYSTEM ---
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * 6 - 3;
+                this.color = color;
+                this.alpha = 1;
+            }
+            update() { 
+                this.x += this.speedX; 
+                this.y += this.speedY; 
+                this.alpha -= 0.02; 
+            }
+            draw() {
+                ctx.save(); 
+                ctx.globalAlpha = this.alpha; 
+                ctx.fillStyle = this.color;
+                ctx.beginPath(); 
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); 
+                ctx.fill();
+                ctx.restore();
+            }
         }
 
-        // Grass Texture
-        const grassTexture = document.createElement("canvas");
-        grassTexture.width = 520; grassTexture.height = 180;
-        const grassCtx = grassTexture.getContext("2d");
-        const g = grassCtx.createLinearGradient(0,0,0,180);
-        g.addColorStop(0,"#4caf50"); g.addColorStop(1,"#2e7d32");
-        grassCtx.fillStyle = g;
-        grassCtx.fillRect(0,0,520,180);
-        for(let i=0; i<450; i++){
-            let x = Math.random()*520;
-            let h = 10 + Math.random()*18;
-            grassCtx.strokeStyle="rgba(0,70,0,0.35)";
-            grassCtx.beginPath();
-            grassCtx.moveTo(x,180);
-            grassCtx.quadraticCurveTo(x + Math.random()*6-3, 180-h/2, x + Math.random()*4-2, 180-h);
-            grassCtx.stroke();
+        function createExplosion(x, y) {
+            const colors = ["#ff4500", "#ff8c00", "#ffd700", "#ffffff"];
+            for (let i = 0; i < 25; i++) {
+                let color = colors[Math.floor(Math.random() * colors.length)];
+                particles.push(new Particle(x, y, color));
+            }
         }
 
         // --- INPUT HANDLING ---
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
+            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
+        });
+        document.addEventListener("keyup", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = false;
+            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = false;
+        });
+
         const leftBtn = document.getElementById("leftBtn");
         const rightBtn = document.getElementById("rightBtn");
-// --- KEYBOARD CONTROLS FOR LAPTOP ---
-document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-        keys.left = true;
-    }
-    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-        keys.right = true;
-    }
-});
-
-document.addEventListener("keyup", (e) => {
-    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-        keys.left = false;
-    }
-    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-        keys.right = false;
-    }
-});
-
-        leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); playClick(); keys.left = true; });
+        leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); keys.left = true; });
         leftBtn.addEventListener("touchend", (e) => { e.preventDefault(); keys.left = false; });
-        rightBtn.addEventListener("touchstart", (e) => { e.preventDefault(); playClick(); keys.right = true; });
+        rightBtn.addEventListener("touchstart", (e) => { e.preventDefault(); keys.right = true; });
         rightBtn.addEventListener("touchend", (e) => { e.preventDefault(); keys.right = false; });
 
         // --- DRAWING FUNCTIONS ---
+        function drawBackground() {
+            bgOffset = -newtonX * 0.1; // Dynamic Parallax
+            ctx.drawImage(backgroundImg, bgOffset - 20, 0, canvas.width + 40, canvas.height);
+        }
 
         function drawApple(){
             const appleGrad = ctx.createRadialGradient(appleX-4,appleY-6,2,appleX,appleY,16);
@@ -228,165 +161,100 @@ document.addEventListener("keyup", (e) => {
             appleGrad.addColorStop(1,isGolden?"#d4af37":"#b71c1c");
             ctx.fillStyle=appleGrad;
             ctx.beginPath(); ctx.arc(appleX,appleY,15,0,Math.PI*2); ctx.fill();
-            
-            ctx.beginPath(); ctx.arc(appleX-5,appleY-6,4,0,Math.PI*2); 
-            ctx.fillStyle=isGolden?"#fff4a3":"#ffaaaa"; ctx.fill();
-            
             ctx.fillStyle="brown"; ctx.fillRect(appleX-1,appleY-22,2,10);
         }
 
         function drawNewton(){
+            // Character Shadow
             ctx.fillStyle="rgba(0,0,0,0.25)";
             ctx.beginPath(); ctx.ellipse(newtonX+85,565,55,10,0,0,Math.PI*2); ctx.fill();
+            // Newton Sprite (Wider)
             ctx.drawImage(newtonImg, newtonX, 370, 170, 195); 
         }
 
-        function drawGrass(){ ctx.drawImage(grassTexture,0,440); }
-
-        function drawClouds(){
-            ctx.fillStyle="rgba(255,255,255,0.9)";
-            clouds.forEach(c=>{
-                ctx.beginPath(); ctx.arc(c.x,c.y,20,0,Math.PI*2);
-                ctx.arc(c.x+25,c.y+5,25,0,Math.PI*2);
-                ctx.arc(c.x+55,c.y,20,0,Math.PI*2); ctx.fill();
-                c.x+=c.speed; if(c.x>canvas.width+60) c.x=-60;
-            });
-        }
-
-        function drawBackground(){
-    // This draws your image to perfectly fill the game frame (520x620)
-    ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-}
-
-
-        // --- GAME OBJECT LOGIC ---
-
+        // --- LOGIC FUNCTIONS ---
         function spawnBomb() {
-    // Check the horizontal distance between the apple and the new bomb
-    let potentialX = Math.random() * (canvas.width - 40);
-    let distanceToApple = Math.abs(potentialX - appleX);
-
-    // Only spawn if the bomb is at least 100 pixels away from the apple
-    // and the random chance hits.
-    if (Math.random() < 0.01&& distanceToApple > 100) { 
-        bombs.push({
-            x: potentialX,
-            y: -50,
-            size: 45,
-            speed: 4 + Math.random() * 2
-        });
-    }
-}
+            let potentialX = Math.random() * (canvas.width - 40);
+            let distanceToApple = Math.abs(potentialX - appleX);
+            // Spawn fairness: doesn't spawn exactly on the apple
+            if (Math.random() < 0.015 && distanceToApple > 120) { 
+                bombs.push({ x: potentialX, y: -50, size: 45, speed: 4 + Math.random() * 2 });
+            }
+        }
 
         function updateBombs() {
             for (let i = bombs.length - 1; i >= 0; i--) {
                 let b = bombs[i];
                 b.y += b.speed;
-                
-                ctx.save();
-                ctx.globalCompositeOperation = 'multiply';
                 ctx.drawImage(bombImg, b.x, b.y, b.size, b.size);
-                ctx.restore();
-
-                if (b.x < newtonX + 110 && b.x + b.size > newtonX + 40 &&
-                    b.y > 380 && b.y < 560) {
-{explodeSound.play();
-createExplosion(b.x+b.size/2,b.y+b.size/2)
+                
+                // Tightened Hitbox for fairness
+                if (b.x < newtonX + 130 && b.x + b.size > newtonX + 40 && b.y > 380 && b.y < 540) {
+                    createExplosion(b.x + b.size/2, b.y + b.size/2);
                     gameOver = true;
-                    music.pause();
                 }
                 if (b.y > canvas.height) bombs.splice(i, 1);
             }
         }
 
         function resetApple(){
-            appleY=-20;
+            appleY = -20;
             appleX = 40 + Math.random() * (canvas.width - 80);
             isGolden = Math.random() < 0.2;
         }
 
         function restartGame(){
-            playClick();
-            score=0; speed=5; gameOver=false;
-            bombs = []; 
+            score = 0; speed = 5; gameOver = false;
+            bombs = []; particles = [];
             resetApple();
-            music.currentTime = 0; music.play();
             gameLoop();
         }
 
-        // --- MAIN GAME LOOP ---
+        // --- MAIN LOOP ---
+        function gameLoop(){
+            if(gameOver){
+                drawBackground();
+                ctx.fillStyle="rgba(0,0,0,0.7)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+                ctx.fillStyle="white"; ctx.textAlign="center";
+                ctx.font="bold 40px Arial"; ctx.fillText("GAME OVER", canvas.width/2, 300);
+                ctx.font="24px Arial"; ctx.fillText("Score: " + score, canvas.width/2, 350);
+                return;
+            }
 
-        function gameLoop() {
-    if (gameOver) {
-        // Draw the background one last time so the screen isn't empty
-        drawBackground(); 
-        
-        // Create the dark overlay
-        ctx.fillStyle = "rgba(0,0,0,0.7)"; 
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw the text
-        ctx.fillStyle = "white"; 
-        ctx.textAlign = "center";
-        ctx.font = "bold 40px Arial"; 
-        ctx.fillText("GAME OVER", canvas.width / 2, 300);
-        
-        ctx.font = "24px Arial"; 
-        ctx.fillText("Score: " + score, canvas.width / 2, 350);
-        
-        // IMPORTANT: Stop the loop here
-        return; 
-    }
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            
+            // Correct Layering: Background -> Particles -> Newton -> Apple -> Bombs
+            drawBackground(); 
+            
+            particles.forEach((p, i) => {
+                p.update(); p.draw();
+                if (p.alpha <= 0) particles.splice(i, 1);
+            });
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawNewton();
+            drawApple();
+            
+            spawnBomb();
+            updateBombs();
 
-    // Drawing order: Background -> Newton/Apple -> Bombs
-    drawBackground(); 
-    drawNewton();
-    drawApple();
-    
-    spawnBomb();
-    updateBombs();
-particles.forEach((p, i) => {
-    p.update();
-    p.draw();
-    if (p.alpha <= 0) particles.splice(i, 1);
-});
+            if (keys.left && newtonX > -50) newtonX -= 8;
+            if (keys.right && newtonX < canvas.width - 100) newtonX += 8;
 
+            ctx.fillStyle="black"; ctx.textAlign="left";
+            ctx.font="bold 22px Arial"; ctx.fillText("Score: "+score, 20, 40);
 
-    // Movement
-    if (keys.left && newtonX > -50) newtonX -= 8;
-    if (keys.right && newtonX < canvas.width - 100) newtonX += 8;
+            appleY += speed;
+            if(appleY > 400 && appleY < 500 && appleX > newtonX && appleX < newtonX + 170){
+                score += isGolden ? 5 : 1;
+                if(score % 10 === 0) speed += 0.5;
+                resetApple();
+            }
+            if(appleY > canvas.height){ gameOver = true; }
+            requestAnimationFrame(gameLoop);
+        }
 
-    // Score UI
-    ctx.fillStyle = "black"; 
-    ctx.textAlign = "left";
-    ctx.font = "bold 22px Arial"; 
-    ctx.fillText("Score: " + score, 20, 40);
-
-    // Apple physics
-    appleY += speed;
-    if (appleY > 400 && appleY < 500 && appleX > newtonX && appleX < newtonX + 170) {
-        catchSound.currentTime=0;
-        catch sound.play();
-        score += isGolden ? 5 : 1;
-        if (score % 10 === 0) speed += 0.5;
-        resetApple();
-    }
-    
-    // Check if apple was missed
-    if (appleY > canvas.height) { 
-        gameOver = true; 
-        music.pause(); 
-    }
-
-    windTime += 0.03;
-    requestAnimationFrame(gameLoop);
-}
-      // --- EXECUTION ---
         resetApple();
         gameLoop();
-
     </script>
 </body>
 </html>
