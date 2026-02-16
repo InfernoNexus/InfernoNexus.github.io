@@ -2,52 +2,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">    
 <title>Newton & Gravity</title>    
 <style>  
+/* This container hides the overlapping parts of the sprite sheet */
 #leftBtn, #rightBtn {
-    width: 90px;
-    height: 90px;
+    width: 85px;  /* Fixed width */
+    height: 85px; /* Fixed height */
     border: none;
-    outline: none;
     background-color: transparent;
     background-image: url('buttons.png'); 
     background-repeat: no-repeat;
     
-    /* We zoom in more to hide the checkerboard edges */
-    background-size: 330px; 
+    /* This tells the browser: 'The sheet is 3 times wider than the button' */
+    background-size: 300% auto; 
     
     cursor: pointer;
+    overflow: hidden; /* Hides the checkerboard outside the circle */
     transition: transform 0.1s ease;
-    -webkit-tap-highlight-color: transparent;
 }
 
-/* LEFT ARROW: Recalibrated for center */
+/* POSITION FOR LEFT ARROW */
 #leftBtn {
-    background-position: -35px -100px; 
+    /* 0% 0% focuses on the top-left corner of the image */
+    background-position: 5% 4%; 
 }
 
-/* RIGHT ARROW: Recalibrated for center */
+/* POSITION FOR RIGHT ARROW */
 #rightBtn {
-    background-position: -230px -15px; 
+    /* 100% 0% focuses on the top-right corner of the image */
+    background-position: 95% 4%; 
 }
 
-/* RESTART BUTTON: Moved lower to avoid seeing the arrows above it */
+/* RESTART BUTTON FIXED */
 .restart-btn {
     display: block;
     margin: 20px auto;
-    width: 210px;
+    width: 220px;
     height: 65px;
     border: none;
+    background: url('buttons.png') no-repeat;
     background-color: transparent;
-    background-image: url('buttons.png');
-    background-repeat: no-repeat;
-    background-size: 330px;
-    background-position: -60px -235px; 
+    /* Focuses on the bottom section of the image */
+    background-size: 150% auto;
+    background-position: center 92%; 
     cursor: pointer;
 }
 
-/* DYNAMIC CLICK EFFECT */
+/* THE DYNAMIC CLICK */
 #leftBtn:active, #rightBtn:active, .restart-btn:active {
     transform: translateY(6px) scale(0.95);
-    filter: brightness(0.8);
+    filter: brightness(0.85); /* Dims it so it looks pressed */
 }
 
 </style>
