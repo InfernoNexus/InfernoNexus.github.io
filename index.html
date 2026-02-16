@@ -239,12 +239,12 @@ function drawNewton() {
     // We keep the shadow (optional, but looks nice)
     ctx.fillStyle = "rgba(0,0,0,0.25)";
     ctx.beginPath(); 
-    ctx.ellipse(newtonX + 50, 565, 42, 10, 0, 0, Math.PI * 2); 
+    ctx.ellipse(newtonX + 50, 565, 70, 10, 0, 0, Math.PI * 2); 
     ctx.fill();
 
     // DRAW THE IMAGE
     // newtonX is the horizontal position, 420 is the height to match your game ground
-    ctx.drawImage(newtonImg, newtonX, 420, 100, 130); 
+    ctx.drawImage(newtonImg, newtonX, 350, 200, 230); 
 }
 
 
