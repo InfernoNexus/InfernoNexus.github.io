@@ -243,7 +243,7 @@ document.addEventListener("keyup", (e) => {
 
     // Only spawn if the bomb is at least 100 pixels away from the apple
     // and the random chance hits.
-    if (Math.random() < 0.0015 && distanceToApple > 100) { 
+    if (Math.random() < 0.01&& distanceToApple > 100) { 
         bombs.push({
             x: potentialX,
             y: -50,
