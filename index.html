@@ -15,7 +15,18 @@
         }
 
         /* Movement Controls */
-        #controls { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
+#controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+/* Hide buttons when using laptop */
+@media (hover: hover) and (pointer: fine) {
+    #controls { display: none; }
+}
+
 
         /* 3D Action Buttons */
         #leftBtn, #rightBtn {
@@ -152,6 +163,24 @@
         // --- INPUT HANDLING ---
         const leftBtn = document.getElementById("leftBtn");
         const rightBtn = document.getElementById("rightBtn");
+// --- KEYBOARD CONTROLS FOR LAPTOP ---
+document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+        keys.left = true;
+    }
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        keys.right = true;
+    }
+});
+
+document.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+        keys.left = false;
+    }
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+        keys.right = false;
+    }
+});
 
         leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); playClick(); keys.left = true; });
         leftBtn.addEventListener("touchend", (e) => { e.preventDefault(); keys.left = false; });
