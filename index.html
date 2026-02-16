@@ -111,6 +111,14 @@ function createExplosion(x, y) {
         particles.push(new Particle(x, y, "orange"));
     }
 }
+        // --- AUDIO SYSTEM ---
+const catchSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2004/2004-preview.mp3"); // Happy pop
+const explodeSound = new Audio("https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3"); // Explosion/Thud
+const gameOverSound = new Audio("https://assets.mixkit.co/active_storage/sfx/131/131-preview.mp3"); // Fail sound
+
+// Set volumes so they don't overpower the music
+catchSound.volume = 0.6;
+explodeSound.volume = 0.8;
 
         let backgroundImg = new Image();
         backgroundImg.src = 'background.png';
@@ -281,7 +289,9 @@ document.addEventListener("keyup", (e) => {
                 ctx.restore();
 
                 if (b.x < newtonX + 110 && b.x + b.size > newtonX + 40 &&
-                    b.y > 380 && b.y < 560) {createExplosion(b.x+b.size/2,b.y+b.size/2)
+                    b.y > 380 && b.y < 560) {
+{explodeSound.play();
+createExplosion(b.x+b.size/2,b.y+b.size/2)
                     gameOver = true;
                     music.pause();
                 }
@@ -357,6 +367,8 @@ particles.forEach((p, i) => {
     // Apple physics
     appleY += speed;
     if (appleY > 400 && appleY < 500 && appleX > newtonX && appleX < newtonX + 170) {
+        catchSound.currentTime=0;
+        catch sound.play();
         score += isGolden ? 5 : 1;
         if (score % 10 === 0) speed += 0.5;
         resetApple();
