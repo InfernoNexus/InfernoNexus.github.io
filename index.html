@@ -87,7 +87,10 @@ canvas { display: block; margin: auto; background: #87ceeb; border: 4px solid #0
   <button class="restart-btn" onclick="restartGame()">Restart Game</button>    
 </div>  <audio id="bgm" loop>    
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0f7c38a88e.mp3?filename=peaceful-garden-12257.mp3">    
-</audio>  <script>    
+</audio>  <script>  
+let newtonImg = new Image();
+newtonImg.src = 'newton.png'; // Make sure this is uploaded to GitHub!
+  
 let bombs = [];
 let bombImg = new Image();
 bombImg.src = 'bomb.png';
@@ -190,7 +193,7 @@ function updateBombs() {
 
         // Collision with Newton
                 if (b.x < newtonX + 80 && b.x + b.size > newtonX + 20 &&
-            b.y < 455 + 95 && b.y + b.size > 455) {
+            b.y < 420+130 && b.y + b.size > 420) {
             
             // DRAW EXPLOSION
             ctx.fillStyle = "yellow";
@@ -232,16 +235,18 @@ function drawBackground(){
     ctx.beginPath(); ctx.arc(70,250,70,0,Math.PI*2); ctx.fill();
     ctx.restore(); 
 }
-function drawNewton(){
-    ctx.fillStyle="rgba(0,0,0,0.25)";
-    ctx.beginPath(); ctx.ellipse(newtonX+50,565,42,10,0,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle="#6b3f2a"; ctx.fillRect(newtonX,455,100,95);
-    ctx.fillStyle="#ffffff"; ctx.fillRect(newtonX+40,455,20,70);
-    ctx.beginPath(); ctx.arc(newtonX+50,420,26,0,Math.PI*2); ctx.fillStyle="#f1c27d"; ctx.fill();
-    ctx.fillStyle="#f0f0f0"; ctx.beginPath(); ctx.arc(newtonX+50,410,32,Math.PI,0); ctx.fill();
-    ctx.fillStyle="black"; ctx.beginPath(); ctx.arc(newtonX+42,420,2.5,0,Math.PI*2); ctx.arc(newtonX+58,420,2.5,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle="#000"; ctx.fillRect(newtonX+28,550,16,45); ctx.fillRect(newtonX+56,550,16,45);
+function drawNewton() {
+    // We keep the shadow (optional, but looks nice)
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.beginPath(); 
+    ctx.ellipse(newtonX + 50, 565, 42, 10, 0, 0, Math.PI * 2); 
+    ctx.fill();
+
+    // DRAW THE IMAGE
+    // newtonX is the horizontal position, 420 is the height to match your game ground
+    ctx.drawImage(newtonImg, newtonX, 420, 100, 130); 
 }
+
 
 // ---------------- GAME LOGIC ----------------
 function resetApple(){
@@ -279,7 +284,7 @@ function gameLoop(){
     ctx.fillText("Score: "+score, 20, 40);
 
     appleY += speed;
-    if(appleY > 440 && appleX > newtonX && appleX < newtonX + 100){
+    if(appleY > 420 && appleX > newtonX && appleX < newtonX + 100){
         score += isGolden ? 5 : 1;
         if(score % 10 === 0) speed += 0.5;
         resetApple();
