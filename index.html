@@ -2,54 +2,74 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">    
 <title>Newton & Gravity</title>    
 <style>  
+/* Container to center everything */
+#mobile-ui {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: transparent; /* This ensures the checkerboard isn't visible */
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+/* Base style for the round arrow buttons */
 #leftBtn, #rightBtn {
-    width: 80px;  /* Size of the button on your screen */
-    height: 80px;
+    width: 110px;  /* Increased size to fit the glowing aura */
+    height: 110px;
     border: none;
+    outline: none;
     background-color: transparent;
-    
-    /* LINK THE IMAGE */
     background-image: url('buttons.png'); 
     background-repeat: no-repeat;
     
-    /* This 'zooms' the sheet so one button fits the 80px box */
-    background-size: 260px; 
+    /* This scales the 1024px image down so the buttons fit perfectly */
+    background-size: 380px; 
     
     cursor: pointer;
     transition: transform 0.1s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* POSITION FOR LEFT ARROW */
+/* POSITION FOR LEFT ARROW (Crops the top-left button) */
 #leftBtn {
-    /* These numbers 'slide' the sheet to hide the other buttons */
-    background-position: -5px -10px; 
+    background-position: -5px -15px; 
 }
 
-/* POSITION FOR RIGHT ARROW */
+/* POSITION FOR RIGHT ARROW (Crops the top-right button) */
 #rightBtn {
-    /* These numbers 'slide' the sheet to show the Right Arrow */
-    background-position: -175px -10px; 
+    background-position: -265px -15px; 
 }
 
-/* THE CLICK ANIMATION */
+/* THE CLICK ANIMATION (Pushes in and comes up) */
 #leftBtn:active, #rightBtn:active {
-    transform: translateY(6px) scale(0.95);
+    transform: translateY(8px) scale(0.92);
     filter: brightness(0.9);
 }
 
 /* RESTART BUTTON FIXED */
 .restart-btn {
     display: block;
-    margin: 20px auto;
-    width: 180px;
-    height: 50px;
+    width: 240px;
+    height: 75px;
     border: none;
-    background: url('buttons.png') no-repeat;
-    background-size: 260px;
-    background-position: -40px -175px; /* Slides down to the long button */
     background-color: transparent;
+    background-image: url('buttons.png');
+    background-repeat: no-repeat;
+    background-size: 380px;
+    /* Slides down to the Restart Button part of the image */
+    background-position: -70px -265px; 
     cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.restart-btn:active {
+    transform: scale(0.96) translateY(4px);
 }
 
 </style>
