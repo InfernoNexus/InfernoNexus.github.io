@@ -88,6 +88,9 @@ canvas { display: block; margin: auto; background: #87ceeb; border: 4px solid #0
 </div>  <audio id="bgm" loop>    
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0f7c38a88e.mp3?filename=peaceful-garden-12257.mp3">    
 </audio>  <script>    
+let bombs = [];
+let bombImg = new Image();
+bombImg.src = 'bomb.png';
 let windTime = 0;
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -218,6 +221,41 @@ function drawApple(){
     ctx.beginPath(); ctx.arc(appleX,appleY,15,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(appleX-5,appleY-6,4,0,Math.PI*2); ctx.fillStyle=isGolden?"#fff4a3":"#ffaaaa"; ctx.fill();
     ctx.fillStyle="brown"; ctx.fillRect(appleX-1,appleY-22,2,10);
+}
+function spawnBomb() {
+    // Only spawn a bomb 2% of the time each frame
+    if (Math.random() < 0.02) {
+        bombs.push({
+            x: Math.random() * (canvas.width - 40),
+            y: -50,
+            size: 40,
+            speed: 3 + Math.random() * 2 // Bombs can fall faster!
+        });
+    }
+}
+function updateBombs() {
+    for (let i = bombs.length - 1; i >= 0; i--) {
+        let b = bombs[i];
+        b.y += b.speed;
+
+        // DRAW BOMB
+        ctx.drawImage(bombImg, b.x, b.y, b.size, b.size);
+
+        // COLLISION DETECTION
+        if (
+            b.x < player.x + player.width &&
+            b.x + b.size > player.x &&
+            b.y < player.y + player.height &&
+            b.y + b.size > player.y
+        ) {
+            gameOver(); // Call your game over function here
+        }
+
+        // Remove if off screen
+        if (b.y > canvas.height) {
+            bombs.splice(i, 1);
+        }
+    }
 }
 
 // ---------------- GAME LOGIC ----------------
