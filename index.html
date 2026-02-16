@@ -27,57 +27,76 @@
     -webkit-tap-highlight-color: transparent;
 
     /* THE BULGING 3D EFFECT */
-    /* Specular highlight at the top-left, deep red in the middle, dark at the edges */
-    background: radial-gradient(circle at 35% 35%, #ff9999 0%, #cc0000 50%, #660000 100%);
+    /* Deep red base with a darker edge */
+    background: radial-gradient(circle at center, #cc0000 0%, #800000 100%);
     
-    /* THE INNER BLACK SHADOW LINE & OUTER GLOW */
+    /* 3D SHADOWS & DEPTH */
     box-shadow: 
-        inset 0 5px 10px rgba(255,255,255,0.5), /* Top shine for bulging look */
-        inset 0 -8px 15px rgba(0,0,0,0.8),      /* THE BLACK SHADOW LINE at the bottom */
-        0 10px 0 #440000;                        /* 3D Base depth */
+        inset 0 -8px 10px rgba(0,0,0,0.7),      /* The black shadow line at the bottom */
+        0 10px 0 #440000,                       /* The 3D base thickness */
+        0 15px 25px rgba(0,0,0,0.3);            /* Drop shadow on the ground */
+    
+    transition: all 0.1s ease; /* For the push animation */
 }
 
-/* THE THICK GOLDEN CIRCLE WITH LEVITATING AURA */
+/* THE WHITE SPECULAR HIGHLIGHT (The "White Line" at the top) */
+#leftBtn::after, #rightBtn::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    width: 50px;
+    height: 25px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0));
+    border-radius: 50% / 100% 100% 0 0; /* Creates that curved white line/shine */
+    pointer-events: none;
+}
+
+/* THE THICK GOLDEN LEVITATING AURA */
 #leftBtn::before, #rightBtn::before {
     content: '';
     position: absolute;
     top: -12px; left: -12px; right: -12px; bottom: -12px;
     border-radius: 50%;
-    /* Thick golden frame */
-    border: 5px solid #ffd700;
-    /* Layered golden aura glow */
+    border: 6px solid #ffd700; /* Thick golden frame */
     box-shadow: 
-        0 0 15px #ffcc00, 
-        0 0 30px rgba(255, 215, 0, 0.6),
-        inset 0 0 10px #ffcc00;
-    /* Levitating/Pulse animation */
-    animation: levitate 2s infinite ease-in-out;
+        0 0 20px #ffaa00, 
+        inset 0 0 15px #ffaa00;
+    animation: aura-float 2s infinite ease-in-out;
     pointer-events: none;
 }
 
-@keyframes levitate {
-    0%, 100% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.08); filter: brightness(1.3); }
+@keyframes aura-float {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
 }
 
-/* Restart Button - Matching the textured 3D look */
+/* THE "CLICK" ANIMATION (Pushing In) */
+#leftBtn:active, #rightBtn:active {
+    transform: translateY(8px); /* Moves the whole button down */
+    box-shadow: 
+        inset 0 -4px 5px rgba(0,0,0,0.7),
+        0 2px 0 #440000; /* Flattens the 3D base to look "pressed" */
+}
+
+/* Restart Button */
 .restart-btn {
     display: block;
-    margin: 25px auto 10px;
+    margin: 25px auto;
     font-size: 18px;
     font-weight: bold;
     padding: 12px 30px;
     border-radius: 15px;
-    border: 3px solid #ffd700;
+    border: 4px solid #ffd700;
     color: white;
     cursor: pointer;
     background: linear-gradient(#ee4444, #990000);
     box-shadow: 0 6px 0 #660000, 0 0 20px rgba(255, 215, 0, 0.4);
+    transition: 0.1s;
 }
 
-#leftBtn:active, #rightBtn:active, .restart-btn:active {
+.restart-btn:active {
     transform: translateY(4px);
-    box-shadow: 0 2px 0 #330000;
+    box-shadow: 0 2px 0 #660000;
 }
 
 </style>
