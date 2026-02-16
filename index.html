@@ -293,9 +293,9 @@ document.addEventListener("keyup", (e) => {
             }
 
             ctx.clearRect(0,0,canvas.width,canvas.height);
+            drawBackground();
             drawNewton();
             drawApple();
-            drawBackground(); 
             spawnBomb();
             updateBombs();
 
