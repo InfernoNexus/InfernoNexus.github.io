@@ -177,7 +177,7 @@
             let potentialX = Math.random() * (canvas.width - 40);
             let distanceToApple = Math.abs(potentialX - appleX);
             // Spawn fairness: doesn't spawn exactly on the apple
-            if (Math.random() < 0.015 && distanceToApple > 120) { 
+            if (Math.random() < 0.01&& distanceToApple > 120) { 
                 bombs.push({ x: potentialX, y: -50, size: 45, speed: 4 + Math.random() * 2 });
             }
         }
