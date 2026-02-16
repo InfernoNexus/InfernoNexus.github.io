@@ -1,7 +1,7 @@
 <!DOCTYPE html>  <html>    <head>    
 <meta name="viewport" content="width=device-width, initial-scale=1.0">    
 <title>Newton & Gravity</title>    
-<style>    
+<style>  
 /* Container for the buttons */
 #controls {
     display: flex;
@@ -10,103 +10,72 @@
     margin-top: 20px;
 }
 
-/* The Bulging 3D Orb Button */
+/* Base style for both Left and Right buttons */
 #leftBtn, #rightBtn {
-    width: 85px;
-    height: 85px;
-    border-radius: 50%;
-    cursor: pointer;
-    position: relative;
-    font-size: 28px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 100px;   /* Size of the button area */
+    height: 100px;
     border: none;
     outline: none;
+    cursor: pointer;
+    background-color: transparent; /* Makes the button background clear */
+    
+    /* LINK THE IMAGE HERE */
+    background-image: url('buttons.png'); 
+    background-repeat: no-repeat;
+    background-size: 320px; /* Adjust this to scale the whole sheet */
+    
+    /* Smooth 'Pop-back' animation */
+    transition: transform 0.1s ease;
     -webkit-tap-highlight-color: transparent;
-
-    /* THE BULGING 3D EFFECT */
-    /* Deep red base with a darker edge */
-    background: radial-gradient(circle at center, #cc0000 0%, #800000 100%);
-    
-    /* 3D SHADOWS & DEPTH */
-    box-shadow: 
-        inset 0 -8px 10px rgba(0,0,0,0.7),      /* The black shadow line at the bottom */
-        0 10px 0 #440000,                       /* The 3D base thickness */
-        0 15px 25px rgba(0,0,0,0.3);            /* Drop shadow on the ground */
-    
-    transition: all 0.1s ease; /* For the push animation */
 }
 
-/* THE WHITE SPECULAR HIGHLIGHT (The "White Line" at the top) */
-#leftBtn::after, #rightBtn::after {
-    content: '';
-    position: absolute;
-    top: 10px;
-    width: 50px;
-    height: 25px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0));
-    border-radius: 50% / 100% 100% 0 0; /* Creates that curved white line/shine */
-    pointer-events: none;
+/* POSITION THE IMAGE FOR LEFT BUTTON */
+#leftBtn {
+    /* These numbers 'slide' the sheet to show the Left Arrow */
+    background-position: -15px -15px; 
 }
 
-/* THE THICK GOLDEN LEVITATING AURA */
-#leftBtn::before, #rightBtn::before {
-    content: '';
-    position: absolute;
-    top: -12px; left: -12px; right: -12px; bottom: -12px;
-    border-radius: 50%;
-    border: 6px solid #ffd700; /* Thick golden frame */
-    box-shadow: 
-        0 0 20px #ffaa00, 
-        inset 0 0 15px #ffaa00;
-    animation: aura-float 2s infinite ease-in-out;
-    pointer-events: none;
+/* POSITION THE IMAGE FOR RIGHT BUTTON */
+#rightBtn {
+    /* These numbers 'slide' the sheet to show the Right Arrow */
+    background-position: -205px -15px; 
 }
 
-@keyframes aura-float {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.1); opacity: 1; }
-}
-
-/* THE "CLICK" ANIMATION (Pushing In) */
+/* THE CLICK EFFECT (The "Dynamic" part) */
 #leftBtn:active, #rightBtn:active {
-    transform: translateY(8px); /* Moves the whole button down */
-    box-shadow: 
-        inset 0 -4px 5px rgba(0,0,0,0.7),
-        0 2px 0 #440000; /* Flattens the 3D base to look "pressed" */
+    /* This makes the button physically move down and shrink when touched */
+    transform: translateY(8px) scale(0.92);
+    /* This dims it slightly so it looks like it's in a shadow */
+    filter: brightness(0.8);
 }
 
-/* Restart Button */
+/* RESTART BUTTON */
 .restart-btn {
     display: block;
-    margin: 25px auto;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 12px 30px;
-    border-radius: 15px;
-    border: 4px solid #ffd700;
-    color: white;
+    margin: 20px auto;
+    width: 200px;
+    height: 60px;
+    border: none;
+    background: url('buttons.png') no-repeat;
+    background-size: 320px;
+    background-position: -55px -215px; /* Slide to the Restart Button part */
+    background-color: transparent;
     cursor: pointer;
-    background: linear-gradient(#ee4444, #990000);
-    box-shadow: 0 6px 0 #660000, 0 0 20px rgba(255, 215, 0, 0.4);
-    transition: 0.1s;
+    transition: transform 0.1s;
 }
 
 .restart-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #660000;
+    transform: scale(0.95) translateY(4px);
 }
-
+  
 </style>
 
 </head>    
 <body>  <h2>🍎 Newton & Gravity 🍎</h2>    
 <canvas id="game" width="520" height="620"></canvas>  <div id="mobile-ui">
     <div id="controls">
-        <button id="leftBtn">◀</button>
-        <button id="rightBtn">▶</button>
+        <button id="leftBtn"></button>
+        <button id="rightBtn"></button>
     </div>
     <button class="restart-btn" onclick="restartGame()">Restart Game</button>
 </div>
