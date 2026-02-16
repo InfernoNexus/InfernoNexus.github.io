@@ -208,15 +208,21 @@
         // --- GAME OBJECT LOGIC ---
 
         function spawnBomb() {
-            if (Math.random() < 0.005) { 
-                bombs.push({
-                    x: Math.random() * (canvas.width - 40),
-                    y: -50,
-                    size: 45,
-                    speed: 4 + Math.random() * 2
-                });
-            }
-        }
+    // Check the horizontal distance between the apple and the new bomb
+    let potentialX = Math.random() * (canvas.width - 40);
+    let distanceToApple = Math.abs(potentialX - appleX);
+
+    // Only spawn if the bomb is at least 100 pixels away from the apple
+    // and the random chance hits.
+    if (Math.random() < 0.0015 && distanceToApple > 100) { 
+        bombs.push({
+            x: potentialX,
+            y: -50,
+            size: 45,
+            speed: 4 + Math.random() * 2
+        });
+    }
+}
 
         function updateBombs() {
             for (let i = bombs.length - 1; i >= 0; i--) {
@@ -228,8 +234,8 @@
                 ctx.drawImage(bombImg, b.x, b.y, b.size, b.size);
                 ctx.restore();
 
-                if (b.x < newtonX + 150 && b.x + b.size > newtonX + 20 &&
-                    b.y > 370 && b.y < 560) {
+                if (b.x < newtonX + 110 && b.x + b.size > newtonX + 40 &&
+                    b.y > 380 && b.y < 560) {createExplosion(b.x+b.size/2,b.y+b.size/2)
                     gameOver = true;
                     music.pause();
                 }
