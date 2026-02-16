@@ -106,11 +106,7 @@ let lives = 1;
 let gameOver = false;
 let isGolden = false;
 
-// Track button states for continuous movement
-const keys = {
-    left: false,
-    right: false
-};
+const keys = { left: false, right: false };
 
 let clouds = [
     { x: 50, y: 80, speed: 0.3 },
@@ -124,13 +120,6 @@ barkTexture.width = 45; barkTexture.height = 220;
 const barkCtx = barkTexture.getContext("2d");
 barkCtx.fillStyle = "#6d4c41";
 barkCtx.fillRect(0,0,45,220);
-for(let i=0; i<70; i++){
-    barkCtx.strokeStyle = "rgba(0,0,0,0.2)";
-    barkCtx.beginPath();
-    let x = Math.random()*45;
-    barkCtx.moveTo(x,0); barkCtx.lineTo(x + Math.random()*2-1, 220);
-    barkCtx.stroke();
-}
 
 const grassTexture = document.createElement("canvas");
 grassTexture.width = 520; grassTexture.height = 180;
@@ -139,19 +128,8 @@ const g = grassCtx.createLinearGradient(0,0,0,180);
 g.addColorStop(0,"#4caf50"); g.addColorStop(1,"#2e7d32");
 grassCtx.fillStyle = g;
 grassCtx.fillRect(0,0,520,180);
-for(let i=0; i<450; i++){
-    let x = Math.random()*520;
-    let h = 10 + Math.random()*18;
-    grassCtx.strokeStyle="rgba(0,70,0,0.35)";
-    grassCtx.beginPath();
-    grassCtx.moveTo(x,180);
-    grassCtx.quadraticCurveTo(x + Math.random()*6-3, 180-h/2, x + Math.random()*4-2, 180-h);
-    grassCtx.stroke();
-}
 
 // ---------------- CONTROLS ----------------
-
-// Keyboard support
 window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") keys.left = true;
     if (e.key === "ArrowRight") keys.right = true;
@@ -161,7 +139,6 @@ window.addEventListener("keyup", (e) => {
     if (e.key === "ArrowRight") keys.right = false;
 });
 
-// Mobile Touch support (Hold to move)
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
@@ -197,7 +174,6 @@ function drawBackground(){
     ctx.beginPath(); ctx.arc(112,230,80,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(150,250,70,0,Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(70,250,70,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(112,280,75,0,Math.PI*2); ctx.fill();
     ctx.restore(); 
 }
 
@@ -219,59 +195,46 @@ function drawApple(){
     appleGrad.addColorStop(1,isGolden?"#d4af37":"#b71c1c");
     ctx.fillStyle=appleGrad;
     ctx.beginPath(); ctx.arc(appleX,appleY,15,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(appleX-5,appleY-6,4,0,Math.PI*2); ctx.fillStyle=isGolden?"#fff4a3":"#ffaaaa"; ctx.fill();
-    ctx.fillStyle="brown"; ctx.fillRect(appleX-1,appleY-22,2,10);
 }
+
 function spawnBomb() {
-    // Only spawn a bomb 2% of the time each frame
-    if (Math.random() < 0.06) {
+    if (Math.random() < 0.02) { // Reduced spawn rate for fairness
         bombs.push({
             x: Math.random() * (canvas.width - 40),
             y: -50,
             size: 40,
-            speed: 3 + Math.random() * 2 // Bombs can fall faster!
+            speed: 3 + Math.random() * 2
         });
     }
 }
+
 function updateBombs() {
     for (let i = bombs.length - 1; i >= 0; i--) {
         let b = bombs[i];
         b.y += b.speed;
-
-        // DRAW BOMB
         ctx.drawImage(bombImg, b.x, b.y, b.size, b.size);
 
-        // COLLISION DETECTION (Using Newton's coordinates)
-        if (
-            b.x < newtonX + 100 &&  // Newton's width is 100
-            b.x + b.size > newtonX &&
-            b.y < 455 + 95 &&       // Newton's Y is 455, height is 95
-            b.y + b.size > 455
-        ) {
-            gameOver = true; // Sets the game over flag
+        if (b.x < newtonX + 100 && b.x + b.size > newtonX &&
+            b.y < 455 + 95 && b.y + b.size > 455) {
+            gameOver = true;
             music.pause();
         }
-
-        // Remove if off screen
-        if (b.y > canvas.height) {
-            bombs.splice(i, 1);
-        }
+        if (b.y > canvas.height) bombs.splice(i, 1);
     }
 }
-
 
 // ---------------- GAME LOGIC ----------------
 function resetApple(){
     appleY=-20;
-    const margin=30; 
-    appleX = margin + Math.random() * (canvas.width - margin * 2);
+    appleX = 30 + Math.random() * (canvas.width - 60);
     isGolden=Math.random()<0.2;
 }
 
 function restartGame(){
     score=0; speed=5; lives=1; gameOver=false;
-bombs[];
+    bombs = []; // FIXED SYNTAX
     resetApple();
+    music.currentTime = 0;
     music.volume=0.5; music.play();
     gameLoop();
 }
@@ -283,27 +246,32 @@ function gameLoop(){
         ctx.fillStyle="white"; ctx.font="20px Arial"; ctx.fillText("Score: "+score,215,340);
         return;
     }
-spawnBomb();
-updateBombs();
-    // CONTINUOUS MOVEMENT LOGIC
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    
+    drawClouds(); 
+    drawBackground(); 
+    drawGrass(); 
+    drawNewton(); 
+    drawApple();
+    
+    // Process Bombs after clearing screen
+    spawnBomb();
+    updateBombs();
+
     if (keys.left && newtonX > 0) newtonX -= 7;
     if (keys.right && newtonX < canvas.width - 100) newtonX += 7;
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawClouds(); drawBackground(); drawGrass(); drawNewton(); drawApple();
-    
     ctx.fillStyle="black"; ctx.font="18px Arial";
-    ctx.fillText("Score: "+score,20,30); ctx.fillText("Life: "+lives,440,30);
+    ctx.fillText("Score: "+score,20,30);
 
     appleY+=speed;
     if(appleY>440 && appleX>newtonX && appleX<newtonX+100){
         score+=isGolden?5:1;
-        if(score%10===0) speed+=1;
-if(score%20==0) speed+=2;
-if(score%30==0) speed+=3;
+        if(score % 10 === 0) speed += 1;
         resetApple();
     }
-    if(appleY>canvas.height){ gameOver=true; music.pause(); }
+    if(appleY > canvas.height){ gameOver=true; music.pause(); }
     windTime += 0.03;
     requestAnimationFrame(gameLoop);
 }
@@ -311,6 +279,7 @@ if(score%30==0) speed+=3;
 // ---------------- START ----------------
 resetApple();
 gameLoop();
+
 </script>  </body>
 
 </html>  
