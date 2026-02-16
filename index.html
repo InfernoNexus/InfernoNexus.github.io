@@ -2,72 +2,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">    
 <title>Newton & Gravity</title>    
 <style>  
-/* Container for the buttons */
-#controls {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 20px;
-}
-
-/* Base style for both Left and Right buttons */
 #leftBtn, #rightBtn {
-    width: 100px;   /* Size of the button area */
-    height: 100px;
+    width: 80px;  /* Size of the button on your screen */
+    height: 80px;
     border: none;
-    outline: none;
-    cursor: pointer;
-    background-color: transparent; /* Makes the button background clear */
+    background-color: transparent;
     
-    /* LINK THE IMAGE HERE */
+    /* LINK THE IMAGE */
     background-image: url('buttons.png'); 
     background-repeat: no-repeat;
-    background-size: 320px; /* Adjust this to scale the whole sheet */
     
-    /* Smooth 'Pop-back' animation */
+    /* This 'zooms' the sheet so one button fits the 80px box */
+    background-size: 260px; 
+    
+    cursor: pointer;
     transition: transform 0.1s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* POSITION THE IMAGE FOR LEFT BUTTON */
+/* POSITION FOR LEFT ARROW */
 #leftBtn {
-    /* These numbers 'slide' the sheet to show the Left Arrow */
-    background-position: -15px -15px; 
+    /* These numbers 'slide' the sheet to hide the other buttons */
+    background-position: -5px -10px; 
 }
 
-/* POSITION THE IMAGE FOR RIGHT BUTTON */
+/* POSITION FOR RIGHT ARROW */
 #rightBtn {
     /* These numbers 'slide' the sheet to show the Right Arrow */
-    background-position: -205px -15px; 
+    background-position: -175px -10px; 
 }
 
-/* THE CLICK EFFECT (The "Dynamic" part) */
+/* THE CLICK ANIMATION */
 #leftBtn:active, #rightBtn:active {
-    /* This makes the button physically move down and shrink when touched */
-    transform: translateY(8px) scale(0.92);
-    /* This dims it slightly so it looks like it's in a shadow */
-    filter: brightness(0.8);
+    transform: translateY(6px) scale(0.95);
+    filter: brightness(0.9);
 }
 
-/* RESTART BUTTON */
+/* RESTART BUTTON FIXED */
 .restart-btn {
     display: block;
     margin: 20px auto;
-    width: 200px;
-    height: 60px;
+    width: 180px;
+    height: 50px;
     border: none;
     background: url('buttons.png') no-repeat;
-    background-size: 320px;
-    background-position: -55px -215px; /* Slide to the Restart Button part */
+    background-size: 260px;
+    background-position: -40px -175px; /* Slides down to the long button */
     background-color: transparent;
     cursor: pointer;
-    transition: transform 0.1s;
 }
 
-.restart-btn:active {
-    transform: scale(0.95) translateY(4px);
-}
-  
 </style>
 
 </head>    
