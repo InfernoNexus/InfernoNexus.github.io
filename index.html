@@ -75,6 +75,9 @@
         // --- ASSET LOADING ---
         const canvas = document.getElementById("game");
         const ctx = canvas.getContext("2d");
+        const borderImg = new Image();
+        borderImg.src = 'border.png'; // Make     sure the filename matches exactly
+
 
         let backgroundImg = new Image();
         backgroundImg.src = 'background.png';
@@ -250,6 +253,8 @@
                 resetApple();
             }
             if(appleY > canvas.height){ gameOver = true; }
+ctx.drawImage(borderImg, 0, 0, canvas.width, canvas.height);
+
             requestAnimationFrame(gameLoop);
         }
 
