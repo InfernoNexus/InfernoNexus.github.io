@@ -9,10 +9,15 @@
         body { margin: 0; text-align: center; font-family: Arial; background: #b0e2ff; }
         
         canvas { 
-    display: block; margin: auto; 
-    width: 95%; max-width: 520px; 
-    box-shadow: 0 0 50px rgba(0,0,0,0.2);
+    display: block; 
+    margin: auto; 
+    border: none; /* Already removed, good! */
+    border-radius: 0; /* Keeps it sharp for the frame */
+    width: 95%; 
+    max-width: 520px; 
+    background: transparent; /* Add this */
 }
+
 
 
         /* Movement Controls - Hidden on Laptops */
