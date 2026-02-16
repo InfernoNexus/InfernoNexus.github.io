@@ -89,6 +89,29 @@
 
     <script>
         // --- ASSET LOADING ---
+        let particles = [];
+class Particle {
+    constructor(x, y, color) {
+        this.x = x; this.y = y;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = Math.random() * 6 - 3;
+        this.speedY = Math.random() * 6 - 3;
+        this.color = color;
+        this.alpha = 1;
+    }
+    update() { this.x += this.speedX; this.y += this.speedY; this.alpha -= 0.02; }
+    draw() {
+        ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+    }
+}
+function createExplosion(x, y) {
+    for (let i = 0; i < 20; i++) {
+        particles.push(new Particle(x, y, "orange"));
+    }
+}
+
         let backgroundImg = new Image();
         backgroundImg.src = 'background.png';
         let bombs = [];
@@ -283,40 +306,72 @@ document.addEventListener("keyup", (e) => {
 
         // --- MAIN GAME LOOP ---
 
-        function gameLoop(){
-            if(gameOver){
-                ctx.fillStyle="rgba(0,0,0,0.7)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-                ctx.fillStyle="white"; ctx.textAlign="center";
-                ctx.font="bold 40px Arial"; ctx.fillText("GAME OVER", canvas.width/2, 300);
-                ctx.font="24px Arial"; ctx.fillText("Score: " + score, canvas.width/2, 350);
-                return;
-            }
+        function gameLoop() {
+    if (gameOver) {
+        // Draw the background one last time so the screen isn't empty
+        drawBackground(); 
+        
+        // Create the dark overlay
+        ctx.fillStyle = "rgba(0,0,0,0.7)"; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw the text
+        ctx.fillStyle = "white"; 
+        ctx.textAlign = "center";
+        ctx.font = "bold 40px Arial"; 
+        ctx.fillText("GAME OVER", canvas.width / 2, 300);
+        
+        ctx.font = "24px Arial"; 
+        ctx.fillText("Score: " + score, canvas.width / 2, 350);
+        
+        // IMPORTANT: Stop the loop here
+        return; 
+    }
 
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            drawBackground();
-            drawNewton();
-            drawApple();
-            spawnBomb();
-            updateBombs();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (keys.left && newtonX > -50) newtonX -= 8;
-            if (keys.right && newtonX < canvas.width - 100) newtonX += 8;
+    // Drawing order: Background -> Newton/Apple -> Bombs
+    drawBackground(); 
+    drawNewton();
+    drawApple();
+    
+    spawnBomb();
+    updateBombs();
+particles.forEach((p, i) => {
+    p.update();
+    p.draw();
+    if (p.alpha <= 0) particles.splice(i, 1);
+});
 
-            ctx.fillStyle="black"; ctx.textAlign="left";
-            ctx.font="bold 22px Arial"; ctx.fillText("Score: "+score, 20, 40);
 
-            appleY += speed;
-            if(appleY > 400 && appleY < 500 && appleX > newtonX && appleX < newtonX + 170){
-                score += isGolden ? 5 : 1;
-                if(score % 10 === 0) speed += 0.5;
-                resetApple();
-            }
-            if(appleY > canvas.height){ gameOver=true; music.pause(); }
-            windTime += 0.03;
-            requestAnimationFrame(gameLoop);
-        }
+    // Movement
+    if (keys.left && newtonX > -50) newtonX -= 8;
+    if (keys.right && newtonX < canvas.width - 100) newtonX += 8;
 
-        // --- EXECUTION ---
+    // Score UI
+    ctx.fillStyle = "black"; 
+    ctx.textAlign = "left";
+    ctx.font = "bold 22px Arial"; 
+    ctx.fillText("Score: " + score, 20, 40);
+
+    // Apple physics
+    appleY += speed;
+    if (appleY > 400 && appleY < 500 && appleX > newtonX && appleX < newtonX + 170) {
+        score += isGolden ? 5 : 1;
+        if (score % 10 === 0) speed += 0.5;
+        resetApple();
+    }
+    
+    // Check if apple was missed
+    if (appleY > canvas.height) { 
+        gameOver = true; 
+        music.pause(); 
+    }
+
+    windTime += 0.03;
+    requestAnimationFrame(gameLoop);
+}
+      // --- EXECUTION ---
         resetApple();
         gameLoop();
 
